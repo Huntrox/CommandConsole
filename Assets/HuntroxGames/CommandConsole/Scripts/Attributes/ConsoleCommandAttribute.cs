@@ -6,24 +6,24 @@ namespace HuntroxGames.Utils
     public class ConsoleCommandAttribute : Attribute
     {
         public string command = "";
-        public string commandDescription = "";
+        public string description = "";
         public bool helpMenu = true;
         public ConsoleCommandAttribute()
         {
-            commandDescription = "";
+            description = "";
             command = "";
             helpMenu = true;
         }      
         public ConsoleCommandAttribute(bool helpMenu)
         {
-            commandDescription = "";
+            description = "";
             command = "";
             this.helpMenu = helpMenu;
         }
-        public ConsoleCommandAttribute(string command, string commandDescription = "",  bool helpMenu = true)
+        public ConsoleCommandAttribute(string command, string description = "",  bool helpMenu = true)
         {
             this.command = command;
-            this.commandDescription = commandDescription;
+            this.description = description;
             this.helpMenu = helpMenu;
         }
     }

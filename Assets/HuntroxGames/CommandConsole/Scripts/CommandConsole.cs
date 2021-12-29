@@ -36,11 +36,7 @@ namespace HuntroxGames.Utils
 
         private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
         private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
-        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
-        {
-            CommandsHandler.FetchCommandAttributes();
-            Debug.Log("Scene loaded: "+arg0.name);
-        }
+        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1) => CommandsHandler.FetchCommandAttributes();
 
         private void Start() 
             => InsertLog("<color=green>type <color=white><b>'Help'</b></color> for a list of commands</color>");
@@ -89,7 +85,7 @@ namespace HuntroxGames.Utils
             var com = CommandsHandler.GETConsoleCommandDescription();
             foreach (var command in com)
             {
-                InsertLog(command.command+" "+command.commandDescription);
+                InsertLog(command.command+" "+command.description);
             }
             lastCommandIndex = commands.Count;
         }

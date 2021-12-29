@@ -4,19 +4,17 @@ using UnityEngine.SceneManagement;
 namespace HuntroxGames.Utils
 {
     public class MethodCommandExample : MonoBehaviour
-    {        
+    {
         private Vector3 targetPosition;
 
-         // if (Input.GetKeyDown(KeyCode.BackQuote))
-         //        Console();
         private void Update() =>
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 2);
 
-
         [ConsoleCommand]
         public void KillAllEnemies() => Debug.Log("DIE DIE DIE!");
-        [ConsoleCommand("SetPlayerGold","[string] [int]")]
-        public void MethodWithArguments(string playerName,int gold) => Debug.Log($"player {playerName}'s gold has been set to {gold}");
+
+        [ConsoleCommand(command: "SetPlayerGold", description: "[string] [int]", helpMenu: true)]
+        public void MethodWithArguments(string playerName, int gold) => Debug.Log($"player {playerName}'s gold: {gold}");
 
         [ConsoleCommand("ReloadScene")]
         private void Reload() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
