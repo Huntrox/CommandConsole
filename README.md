@@ -1,6 +1,5 @@
 # Unity Command Console
-
-### very simple Command Console to create cheat codes and easy developers commands
+very simple Command Console to create cheat codes and easy developers commands
 ![gif](https://i.imgur.com/KRsCrnx.gif)
 ## Features
 - Static and non static objects
