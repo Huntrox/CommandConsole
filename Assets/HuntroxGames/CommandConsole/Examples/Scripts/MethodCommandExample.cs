@@ -12,7 +12,7 @@ namespace HuntroxGames.Utils
 
         [ConsoleCommand]
         public void KillAllEnemies() => Debug.Log("DIE DIE DIE!");
-
+        
         [ConsoleCommand(command: "SetPlayerGold", description: "[string] [int]", helpMenu: true)]
         public void MethodWithArguments(string playerName, int gold) => Debug.Log($"player {playerName}'s gold: {gold}");
 

@@ -36,8 +36,7 @@ namespace HuntroxGames.Utils
                 GetMethods(behaviour);
             }
         }
-
-
+        
         private static void Clear()
         {
             FieldCommands.Clear();
@@ -48,22 +47,22 @@ namespace HuntroxGames.Utils
         internal static void ExecuteCommand(string command, object[] commandArguments,
             Action<string, bool> onGetValueCallback)
         {
-            ExecuteFieldsCommands(command, commandArguments);
+            ExecuteFieldsCommands(command, commandArguments,onGetValueCallback);
             ExecutePropertiesCommands(command, commandArguments, onGetValueCallback);
             InvokeMethodsCommands(command, commandArguments, onGetValueCallback);
         }
 
-        private static void ExecuteFieldsCommands(string fieldName, object[] arguments)
+        private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
+            Action<string, bool> onGetValueCallback)
         {
             foreach (var field in FieldCommands.ExecutableCommands(fieldName))
             {
                 if (arguments.IsNullOrEmpty())
                 {
-                    Debug.LogWarning(
-                        $"Field {field.value.DeclaringType?.Name}.{field.value.Name} value as an argument is required for fields!");
+                    var log = $"{field.value.DeclaringType?.Name}.{field.value.Name} : <b>{field.value.GetValue(field.key)}</b>";
+                    onGetValueCallback?.Invoke(log, false);
                     return;
                 }
-
                 var value = ConsoleCommandHelper.TryParseValue((string) arguments[0], field.value.FieldType);
                 field.value.SetValue(field.key, value);
             }
