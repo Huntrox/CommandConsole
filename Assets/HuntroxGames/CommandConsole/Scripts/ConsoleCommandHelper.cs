@@ -35,42 +35,61 @@ namespace HuntroxGames.Utils
                 if (i >= valueParams.Length)
                     parameters[i] = null;
                 else
-                    parameters[i] = TryParseValue((string) valueParams[i], methodParameters[i].ParameterType);
+                    parameters[i] = ParseArgumentValue((string) valueParams[i], methodParameters[i].ParameterType);
                 
             }
             return parameters;
         }
        
-        internal static object TryParseValue(string value, Type type)
+        internal static object ParseArgumentValue(string value, Type type)
         {
             if (value.IsNullOrEmpty() || value.IsNullOrWhiteSpace())
                 return null;
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Boolean:
-                    return value.ToUpper() == "TRUE" ? true : false;
-                case TypeCode.String:
-                    return value;
-                case TypeCode.Int32:
-                    if (int.TryParse(value, out var intValue))
-                        return intValue;
-                    return null;
-                case TypeCode.Single:
-                    if (float.TryParse(value, out var floatValue))
-                        return floatValue;
-                    return null;
-            }
             
+            if (type.IsEnum)
+                return ToEnum(value, type);
+            
+            else
+            {
+                
+                switch (Type.GetTypeCode(type))
+                {
+                    case TypeCode.Boolean:
+                        return value.ToUpper() == "TRUE";
+                    case TypeCode.String:
+                        return value;
+                    case TypeCode.Int32:
+                        if (int.TryParse(value, out var intValue))
+                            return intValue;
+                        return null;
+                    case TypeCode.Single:
+                        if (float.TryParse(value, out var floatValue))
+                            return floatValue;
+                        return null;
+                }
+            }
+
             if (type == typeof(Vector3) || type == typeof(Vector3Int)) 
-                return ParseToVector(value);
+                return ToVector(value);
             if(type == typeof(Vector2))
-                return (Vector2)ParseToVector(value);
+                return (Vector2)ToVector(value);
             if(type == typeof(Vector2Int))
-                return (Vector2Int)ParseToVector(value);
+                return (Vector2Int)ToVector(value);
             
             return null;
         }
-        internal static object ParseToVector(string value)
+
+        private static object ToEnum(string value, Type type)
+        {
+            try
+            {
+                return  Enum.Parse(type, value, true);
+            }
+            catch { }
+            return null;
+        }
+
+        internal static object ToVector(string value)
         {
             var matches = Regex.Matches(value, ConsoleCommandHelper.VECTOR_PATTERN).Cast<Match>();
             if (Regex.IsMatch(value, VECTOR_INT_PATTERN))
@@ -91,7 +110,6 @@ namespace HuntroxGames.Utils
             }
             return null;
         }
-       
         private static object ParseVectorInt(IEnumerable<Match> matches)
         {
             var coordinates = matches.Where( m =>int.TryParse(m.Value ,out var i))
@@ -105,5 +123,8 @@ namespace HuntroxGames.Utils
             }
             return null;
         }
+        
+        
+        
     }
 }

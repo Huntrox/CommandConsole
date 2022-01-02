@@ -6,6 +6,7 @@ namespace HuntroxGames.Utils
     {
 
         //Fields
+        [ConsoleCommand] public CharacterClass playerClass = CharacterClass.Mage;
         [ConsoleCommand] public string testString;
         [ConsoleCommand("SetSpeed")] public float speed = 0;
         [ConsoleCommand("SetDead")] public bool isDead = false;
@@ -29,6 +30,13 @@ namespace HuntroxGames.Utils
         [ConsoleCommand("EulerAngles")] public Vector3 EulerAngles => transform.eulerAngles;
         [ConsoleCommand] public PersonClass MyPersonClass => new PersonClass();
         
+    }
+
+    public enum CharacterClass
+    {
+        Mage,
+        Warrior,
+        Archer
     }
     public class PersonClass
     {

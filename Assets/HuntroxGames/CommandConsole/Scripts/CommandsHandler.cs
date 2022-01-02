@@ -66,7 +66,7 @@ namespace HuntroxGames.Utils
 
                 if (!field.value.IsLiteral)
                 {
-                    var value = ConsoleCommandHelper.TryParseValue((string) arguments[0], field.value.FieldType);
+                    var value = ConsoleCommandHelper.ParseArgumentValue((string) arguments[0], field.value.FieldType);
                     field.value.SetValue(field.key, value);
                 }
                 else
@@ -99,7 +99,7 @@ namespace HuntroxGames.Utils
                 {
                     if (property.value.CanWrite)
                     {
-                        var value = ConsoleCommandHelper.TryParseValue((string) arguments[0],
+                        var value = ConsoleCommandHelper.ParseArgumentValue((string) arguments[0],
                             property.value.PropertyType);
                         property.value.SetValue(property.key, value);
                     }

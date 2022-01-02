@@ -5,8 +5,8 @@ very simple Command Console to create cheat codes and easy developers commands
 - Methods, Fields and Properties
 - Static and non Static Objects
 - Public and Private
-- Method return types
-- Method arguments
+- Method Return Types
+- Method Prameters
 - Auto Complete Suggestions
 ## How To Use
 
