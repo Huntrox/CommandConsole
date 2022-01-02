@@ -51,7 +51,7 @@ namespace HuntroxGames.Utils
             ExecutePropertiesCommands(command, commandArguments, onGetValueCallback);
             InvokeMethodsCommands(command, commandArguments, onGetValueCallback);
         }
-
+        //Cannot set a constant field
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
             Action<string, bool> onGetValueCallback)
         {
@@ -63,8 +63,17 @@ namespace HuntroxGames.Utils
                     onGetValueCallback?.Invoke(log, false);
                     return;
                 }
-                var value = ConsoleCommandHelper.TryParseValue((string) arguments[0], field.value.FieldType);
-                field.value.SetValue(field.key, value);
+
+                if (!field.value.IsLiteral)
+                {
+                    var value = ConsoleCommandHelper.TryParseValue((string) arguments[0], field.value.FieldType);
+                    field.value.SetValue(field.key, value);
+                }
+                else
+                {
+                    var log = $"Cannot set a constant field {field.value.Name}";
+                    onGetValueCallback?.Invoke(log, false);
+                }
             }
         }
 
@@ -120,7 +129,7 @@ namespace HuntroxGames.Utils
         private static void GetFields(Object behaviour)
         {
             var fields = behaviour.GetType().GetFields(bindingFlags)
-                .Where(f => f.IsDefined(typeof(ConsoleCommandAttribute), false));
+                .Where(f => f.IsDefined(typeof(ConsoleCommandAttribute), false)).ToArray();
             foreach (var field in fields)
             {
                 var attrs = GetAttribute(field);
@@ -132,7 +141,7 @@ namespace HuntroxGames.Utils
         private static void GetProperties(Object behaviour)
         {
             var properties = behaviour.GetType().GetProperties(bindingFlags)
-                .Where(p => p.IsDefined(typeof(ConsoleCommandAttribute), false));
+                .Where(p => p.IsDefined(typeof(ConsoleCommandAttribute), false)).ToArray();
             foreach (var property in properties)
             {
                 var attrs = GetAttribute(property);
@@ -148,7 +157,7 @@ namespace HuntroxGames.Utils
         private static void GetMethods(Object behaviour)
         {
             var methods = behaviour.GetType().GetMethods(bindingFlags)
-                .Where(m => m.IsDefined(typeof(ConsoleCommandAttribute), false));
+                .Where(m => m.IsDefined(typeof(ConsoleCommandAttribute), false)).ToArray();
             foreach (var method in methods)
             {
                 var attrs = GetAttribute(method);
@@ -163,7 +172,7 @@ namespace HuntroxGames.Utils
             foreach (var assembly in assemblies)
             {
                 var types = assembly.GetTypes();
-                foreach (var type in types)
+                foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
                 {
                     var flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
                     var members = type.GetMembers(flags)

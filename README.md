@@ -2,13 +2,12 @@
 very simple Command Console to create cheat codes and easy developers commands
 ![gif](https://i.imgur.com/KRsCrnx.gif)
 ## Features
-- Static and non static objects
-- Public and non-public
+- Methods, Fields and Properties
+- Static and non Static Objects
+- Public and Private
 - Method return types
-- Fields and properties access
 - Method arguments
 - Auto Complete Suggestions
-
 ## How To Use
 
 simply add ConsoleCommandAttribute to any field property or method
@@ -39,7 +38,7 @@ simply add ConsoleCommandAttribute to any field property or method
         }
 ```
 ![gif](https://i.imgur.com/T07V2Dx.gif)
-- Properties
+- Fields and Properties
 ```c#
         [ReadOnly] public int health = 0;
         [ConsoleCommand("SetHealth","[int]")]
