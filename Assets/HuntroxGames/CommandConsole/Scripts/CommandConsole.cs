@@ -11,6 +11,11 @@ namespace HuntroxGames.Utils
 {
     public class CommandConsole : Singleton<CommandConsole>
     {
+
+        [SerializeField] private bool receiveUnityLogMessages;
+        
+        
+        
         #if COMMANDS_CONSOLE
         
         private Vector2 scroll;
@@ -34,8 +39,42 @@ namespace HuntroxGames.Utils
             CommandsHandler.FetchCommandAttributes();
         }
 
-        private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
-        private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
+        private void OnEnable()
+        {
+            if(receiveUnityLogMessages)
+                Application.logMessageReceivedThreaded+= OnUnityLogMessageReceived;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnUnityLogMessageReceived(string condition, string stacktrace, LogType type)
+        {
+            switch (type)
+            {
+                case LogType.Error:
+                    InsertLog($"<color=red>{condition}</color>");
+                    break;
+                case LogType.Assert:
+                    InsertLog(condition);
+                    break;
+                case LogType.Warning:
+                    InsertLog($"<color=yellow>{condition}</color>");
+                    break;
+                case LogType.Log:
+                    InsertLog(condition);
+                    break;
+                case LogType.Exception:
+                    InsertLog($"<color=red>{condition}</color>");
+                    break;
+            }
+       
+        }
+
+        private void OnDisable()
+        {
+            Application.logMessageReceivedThreaded -= OnUnityLogMessageReceived;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1) => CommandsHandler.FetchCommandAttributes();
 
         private void Start() 
@@ -163,22 +202,10 @@ namespace HuntroxGames.Utils
                             HandleCommandInput();
                         break;
                     case KeyCode.UpArrow:
-                        if (!commands.IsNullOrEmpty())
-                        {
-                            commandInput = Regex.Replace(commands[Mathf.Min(0,lastCommandIndex - 1)],
-                                ConsoleCommandHelper.DATE_PREFIX, string.Empty).TrimEnd(' ');
-                            lastCommandIndex = (lastCommandIndex - 0) < 0 ? commands.Count:lastCommandIndex - 1;
-                            TextFieldLineEnd();
-                        }
+                        HandleConsoleNavigation(ConsoleNavigation.Up);
                         break;
                     case KeyCode.DownArrow:
-                        if (!commands.IsNullOrEmpty())
-                        {
-                            commandInput = Regex.Replace(commands[lastCommandIndex],
-                                ConsoleCommandHelper.DATE_PREFIX, string.Empty).TrimEnd(' ');
-                            lastCommandIndex = (lastCommandIndex +1) % commands.Count;
-                            TextFieldLineEnd();
-                        }
+                        HandleConsoleNavigation(ConsoleNavigation.Down);
                         break;
                     case KeyCode.Tab:
                         if (!commandInput.IsNullOrEmpty() && !AutoComplete().IsNullOrEmpty())
@@ -201,6 +228,34 @@ namespace HuntroxGames.Utils
         }
 
 
+        private void HandleConsoleNavigation(ConsoleNavigation navigation)
+        {
+            switch (navigation)
+            {
+                case ConsoleNavigation.Up:
+                    if (!commands.IsNullOrEmpty())
+                    {
+                        commandInput = Regex.Replace(commands[Mathf.Min(0, lastCommandIndex - 1)],
+                            ConsoleCommandHelper.DATE_PREFIX, string.Empty).TrimEnd(' ');
+                        lastCommandIndex = (lastCommandIndex - 0) < 0 ? commands.Count : lastCommandIndex - 1;
+                        TextFieldLineEnd();
+                    }
+                    break;
+                case ConsoleNavigation.Down:
+                    if (!commands.IsNullOrEmpty())
+                    {
+                        commandInput = Regex.Replace(commands[lastCommandIndex],
+                            ConsoleCommandHelper.DATE_PREFIX, string.Empty).TrimEnd(' ');
+                        lastCommandIndex = (lastCommandIndex + 1) % commands.Count;
+                        TextFieldLineEnd();
+                    }
+                    break;
+                case ConsoleNavigation.Left:
+                    break;
+                case ConsoleNavigation.Right:
+                    break;
+            }
+        }
         private string AutoComplete()
         {
             string autoComplete = AutoCompleteSuggestions()[0];
@@ -242,5 +297,11 @@ namespace HuntroxGames.Utils
 
 
 #endif
+    }
+
+    public enum ConsoleNavigation { Up, Down, Left,Right }
+    public struct ConsoleLog
+    {
+        
     }
 }

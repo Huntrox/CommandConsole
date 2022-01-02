@@ -6,12 +6,12 @@ namespace HuntroxGames.Utils
     {
 
         //Fields
+        [ConsoleCommand] public string playerName="Huntrox";
         [ConsoleCommand] public CharacterClass playerClass = CharacterClass.Mage;
-        [ConsoleCommand] public string testString;
-        [ConsoleCommand("SetSpeed")] public float speed = 0;
+        [ConsoleCommand("SetSpeed")] public float speed = 5;
         [ConsoleCommand("SetDead")] public bool isDead = false;
         [ConsoleCommand] public Vector3 spawnPoint = Vector3.zero;
-        [ReadOnly] public int health = 0;
+        [ReadOnly] public int health = 10;
         //Properties setter / getter
         [ConsoleCommand("SetHealth","[int]")]
         [ConsoleCommand("GetHealth")]

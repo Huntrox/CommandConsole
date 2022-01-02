@@ -22,7 +22,17 @@ namespace HuntroxGames.Utils
         [ConsoleCommand("AddNumbers")]
         // private int AddNumbers(int[] numbers) => numbers.Sum();
         private int AddNumbers(int a, int b) => a + b;
-        
+
+        #region UnityLogMessages
+
+        [ConsoleCommand]
+        private void LogMessage() => Debug.Log("Unity Log Message!");
+        [ConsoleCommand]
+        private void WarningLogMessage() => Debug.LogWarning("Unity Warring Message");
+        [ConsoleCommand]
+        private void ErrorLogMessage() => Debug.LogError("Unity Error Message");
+
+        #endregion
         #region Vector2-3 and Vector2Int-3Int
 
         [ConsoleCommand("SetPosition","[x,y,z]")]
