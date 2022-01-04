@@ -14,7 +14,14 @@ namespace HuntroxGames.Utils
         internal const string COMMA_SEPARATOR =@"[\-]?\d*\.?\d+?";
         internal const string VECTOR_INT_PATTERN =@"([\-]?\d*\.?\d+?:int)$";
         internal const string DATE_PREFIX =@"\[<color=yellow>\d+\:\d+\:\d+</*color>\] ";
-        
+        private static readonly Dictionary<Type, Func<string,object>> TypesDictionary= new Dictionary<Type, Func<string,object>>
+        {
+            {typeof(Vector3),ToVector},
+            {typeof(Vector3Int),ToVector},
+            {typeof(Vector2Int),x=>(Vector2Int)ToVector(x)},
+            {typeof(Vector2),x=>(Vector2)ToVector(x)},
+            {typeof(Color),ToColor},
+        };
         internal static (string cmd ,string[] param) SplitCommand(string input)
         {
             var s = input.Split(' ');
@@ -66,15 +73,8 @@ namespace HuntroxGames.Utils
                         return floatValue;
                     return null;
             }
-            if (type == typeof(Vector3) || type == typeof(Vector3Int)) 
-                return ToVector(value);
-            if(type == typeof(Vector2))
-                return (Vector2)ToVector(value);
-            if(type == typeof(Vector2Int))
-                return (Vector2Int)ToVector(value);
-            if (type == typeof(Color))
-                return ToColor(value);
-            
+            if (TypesDictionary.TryGetValue(type, out var funcValue))
+                return funcValue.Invoke(value);
             return null;
         }
 

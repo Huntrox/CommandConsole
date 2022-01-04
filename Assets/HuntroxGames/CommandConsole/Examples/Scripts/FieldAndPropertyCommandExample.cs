@@ -4,7 +4,6 @@ namespace HuntroxGames.Utils
 {
     public class FieldAndPropertyCommandExample : MonoBehaviour
     {
-
         //Fields
         [ConsoleCommand] public string playerName="Huntrox";
         [ConsoleCommand] public CharacterClass playerClass = CharacterClass.Mage;
