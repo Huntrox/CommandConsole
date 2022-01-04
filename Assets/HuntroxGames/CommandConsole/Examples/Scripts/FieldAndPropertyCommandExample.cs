@@ -10,6 +10,7 @@ namespace HuntroxGames.Utils
         [ConsoleCommand] public CharacterClass playerClass = CharacterClass.Mage;
         [ConsoleCommand("SetSpeed")] public float speed = 5;
         [ConsoleCommand("SetDead")] public bool isDead = false;
+        [ConsoleCommand] public Color factionColor = Color.cyan;
         [ConsoleCommand] public Vector3 spawnPoint = Vector3.zero;
         [ReadOnly] public int health = 10;
         //Properties setter / getter

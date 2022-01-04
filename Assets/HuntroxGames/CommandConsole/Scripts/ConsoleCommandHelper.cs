@@ -9,7 +9,9 @@ namespace HuntroxGames.Utils
 {
     internal static class ConsoleCommandHelper
     {
-        internal const string VECTOR_PATTERN =@"[\-]?\d*\.?\d+?";
+        
+        //internal const string COMMA_SEPARATOR =@"[\-]?\d*\.?\d+?";
+        internal const string COMMA_SEPARATOR =@"[\-]?\d*\.?\d+?";
         internal const string VECTOR_INT_PATTERN =@"([\-]?\d*\.?\d+?:int)$";
         internal const string DATE_PREFIX =@"\[<color=yellow>\d+\:\d+\:\d+</*color>\] ";
         
@@ -49,32 +51,29 @@ namespace HuntroxGames.Utils
             if (type.IsEnum)
                 return ToEnum(value, type);
             
-            else
+            switch (Type.GetTypeCode(type))
             {
-                
-                switch (Type.GetTypeCode(type))
-                {
-                    case TypeCode.Boolean:
-                        return value.ToUpper() == "TRUE";
-                    case TypeCode.String:
-                        return value;
-                    case TypeCode.Int32:
-                        if (int.TryParse(value, out var intValue))
-                            return intValue;
-                        return null;
-                    case TypeCode.Single:
-                        if (float.TryParse(value, out var floatValue))
-                            return floatValue;
-                        return null;
-                }
+                case TypeCode.Boolean:
+                    return value.ToUpper() == "TRUE";
+                case TypeCode.String:
+                    return value;
+                case TypeCode.Int32:
+                    if (int.TryParse(value, out var intValue))
+                        return intValue;
+                    return null;
+                case TypeCode.Single:
+                    if (float.TryParse(value, out var floatValue))
+                        return floatValue;
+                    return null;
             }
-
             if (type == typeof(Vector3) || type == typeof(Vector3Int)) 
                 return ToVector(value);
             if(type == typeof(Vector2))
                 return (Vector2)ToVector(value);
             if(type == typeof(Vector2Int))
                 return (Vector2Int)ToVector(value);
+            if (type == typeof(Color))
+                return ToColor(value);
             
             return null;
         }
@@ -89,9 +88,30 @@ namespace HuntroxGames.Utils
             return null;
         }
 
+        private static object ToColor(string value)
+        {
+            var matches = Regex.Matches(value, ConsoleCommandHelper.COMMA_SEPARATOR).Cast<Match>();
+            var values = matches.Where( m =>float.TryParse(m.Value ,out var f))
+                .Select(m=> float.Parse(m.Value)).ToArray();
+            switch (values.Length)
+            {
+                case 4:
+                    return new Color(values[0],values[1],values[2],values[3]);
+                case 3:
+                    return new Color(values[0],values[1],values[2],1);
+                case 2:
+                    return new Color(values[0],values[1],1,1);
+                case 1:
+                    return new Color(values[0],1,1,1);
+            }
+
+            var color = Color.white;
+            ColorUtility.TryParseHtmlString(value.ToLower(), out color);
+            return color;
+        } 
         internal static object ToVector(string value)
         {
-            var matches = Regex.Matches(value, ConsoleCommandHelper.VECTOR_PATTERN).Cast<Match>();
+            var matches = Regex.Matches(value, ConsoleCommandHelper.COMMA_SEPARATOR).Cast<Match>();
             if (Regex.IsMatch(value, VECTOR_INT_PATTERN))
                 return ParseVectorInt(matches);
             else
