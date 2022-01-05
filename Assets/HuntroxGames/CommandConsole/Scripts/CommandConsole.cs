@@ -40,6 +40,7 @@ namespace HuntroxGames.Utils
         private Rect textBoxRect;
         private bool markFocus;
         private ConsoleHistory consoleHistory =new ConsoleHistory();
+        private CommandSuggestion commandSuggestion =new CommandSuggestion();
         protected override void Awake()
         {
             base.Awake();
@@ -191,12 +192,13 @@ namespace HuntroxGames.Utils
             var color = GUI.color;
             textBoxRect = new Rect(logBoxRect.x + 5, logBoxRect.y + logBoxRect.height+2, (logBoxRect.width * 0.35f) - 5, 20f);
             GUI.color = consoleStyle.customStyles[3].normal.textColor; 
-            if(!commandInput.IsNullOrEmpty() && !AutoCompleteSuggestions().IsNullOrEmpty())
-                GUI.Label(textBoxRect,AutoComplete());
+            if(!commandInput.IsNullOrEmpty())
+                GUI.Label(textBoxRect,commandSuggestion.AutoCompleteSuggestion);
 
             GUI.color = consoleStyle.textField.normal.textColor;
             GUI.SetNextControlName("commandInputField");
             commandInput = GUI.TextField(textBoxRect, commandInput);
+            commandSuggestion.SetInput(commandInput);
             GUI.color = color;
             
             if (markFocus)
@@ -226,9 +228,9 @@ namespace HuntroxGames.Utils
                         HandleConsoleNavigation(ConsoleNavigation.Down);
                         break;
                     case KeyCode.Tab:
-                        if (!commandInput.IsNullOrEmpty() && !AutoComplete().IsNullOrEmpty())
+                        if (!commandInput.IsNullOrEmpty() && !commandSuggestion.AutoCompleteSuggestion.IsNullOrEmpty())
                         {
-                            commandInput += AutoComplete().Trim(' ');
+                            commandInput += commandSuggestion.AutoCompleteSuggestion.Trim(' ');
                             TextFieldLineEnd();
                         }
                         break;
@@ -250,52 +252,24 @@ namespace HuntroxGames.Utils
             switch (navigation)
             {
                 case ConsoleNavigation.Up:
-                    if (!logList.IsNullOrEmpty())
-                    {
+                    if (commandInput.IsNullOrEmpty())
                         commandInput = consoleHistory.Previous();
-                        TextFieldLineEnd();
-                    }
+                    else
+                        commandSuggestion.Previous();
+                    TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Down:
-                    if (!logList.IsNullOrEmpty())
-                    {
+                    if (commandInput.IsNullOrEmpty())
                         commandInput = consoleHistory.Next();
-                        TextFieldLineEnd();
-                    }
+                    else
+                        commandSuggestion.Next();
+                    TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Left:
                     break;
                 case ConsoleNavigation.Right:
                     break;
             }
-        }
-        private string AutoComplete()
-        {
-            string autoComplete = AutoCompleteSuggestions()[0];
-            var removedChar = "";
-            for (int i = 0; i < commandInput.Length; i++)
-            {
-                char atChar = autoComplete[i];
-                char chr = commandInput[i];
-                if (char.ToUpperInvariant(atChar) == char.ToUpperInvariant(chr))
-                    removedChar += atChar;
-                
-            }
-            autoComplete = autoComplete.Replace(removedChar,"");
-            foreach (var chr in commandInput)
-                autoComplete = autoComplete.Insert(0, " ");
-            
-            return autoComplete;
-        }
-        private List<string> AutoCompleteSuggestions()
-        {
-            var list = new List<string>();
-            foreach (var command in CommandsHandler.GETConsoleCommandDescription())
-            {
-                if (command.command.StartsWith(commandInput,StringComparison.CurrentCultureIgnoreCase))
-                    list.Add(command.command);
-            }
-            return list;
         }
 
         private void HandleCommandInput()

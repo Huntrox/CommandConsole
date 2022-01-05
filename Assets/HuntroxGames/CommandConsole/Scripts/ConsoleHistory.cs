@@ -20,13 +20,15 @@ namespace HuntroxGames.Utils
             commandHistory.Add(command);
             index = commandHistory.Count;
         }
-        public string Next() 
+        public string Next()
         {
+            if (commandHistory.IsNullOrEmpty()) return "";
             index = (index+1) % commandHistory.Count;
             return commandHistory[index];
         }
         public string Previous() 
         {
+            if (commandHistory.IsNullOrEmpty()) return "";
             index = index - 1 < 0 ? commandHistory.Count -1 : index - 1;
             return commandHistory[index];
         }
