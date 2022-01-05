@@ -13,6 +13,7 @@ namespace HuntroxGames.Utils
         private static readonly CommandInfo<MethodInfo> MethodCommands = new CommandInfo<MethodInfo>();
         private static readonly CommandInfo<PropertyInfo> PropertyCommands = new CommandInfo<PropertyInfo>();
 
+        public static bool rebuildRequired = false;
         private static BindingFlags bindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
@@ -35,6 +36,8 @@ namespace HuntroxGames.Utils
                 GetProperties(behaviour);
                 GetMethods(behaviour);
             }
+
+            rebuildRequired = false;
         }
         
         private static void Clear()
@@ -44,12 +47,14 @@ namespace HuntroxGames.Utils
             MethodCommands.Clear();
         }
 
-        internal static void ExecuteCommand(string command, object[] commandArguments,
+        public static void ExecuteCommand(string command, object[] commandArguments,
             Action<string, bool> onGetValueCallback)
         {
             ExecuteFieldsCommands(command, commandArguments,onGetValueCallback);
             ExecutePropertiesCommands(command, commandArguments, onGetValueCallback);
             InvokeMethodsCommands(command, commandArguments, onGetValueCallback);
+            if(rebuildRequired)
+                FetchCommandAttributes();
         }
         //Cannot set a constant field
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
@@ -244,7 +249,11 @@ namespace HuntroxGames.Utils
             foreach (var inf in commandInfo)
             {
                 if (inf.Key == null)
+                {
+                    CommandsHandler.rebuildRequired = true;
                     continue;
+                }
+
                 if (inf.Value.info.TryGetValue(command, out var v))
                     commands.Add((inf.Key, v));
             }

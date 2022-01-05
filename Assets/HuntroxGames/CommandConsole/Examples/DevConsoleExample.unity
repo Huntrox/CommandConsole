@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   receiveUnityLogMessages: 1
+  fetchMode: 1
 --- !u!4 &185118163
 Transform:
   m_ObjectHideFlags: 0
@@ -224,6 +225,7 @@ MonoBehaviour:
   playerClass: 1
   speed: 5
   isDead: 0
+  factionColor: {r: 0, g: 1, b: 1, a: 1}
   spawnPoint: {x: 0, y: 0, z: 0}
   health: 10
 --- !u!4 &750969528
@@ -286,6 +288,7 @@ MonoBehaviour:
   playerClass: 0
   speed: 5
   isDead: 0
+  factionColor: {r: 0, g: 1, b: 1, a: 1}
   spawnPoint: {x: 0, y: 0, z: 0}
   health: 10
 --- !u!4 &1152606666
