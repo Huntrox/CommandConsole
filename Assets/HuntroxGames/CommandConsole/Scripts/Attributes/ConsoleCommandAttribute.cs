@@ -8,6 +8,7 @@ namespace HuntroxGames.Utils
         public string command = "";
         public string description = "";
         public bool helpMenu = true;
+        public string[] parametersNames;
         public ConsoleCommandAttribute()
         {
             description = "";

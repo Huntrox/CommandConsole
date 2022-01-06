@@ -27,16 +27,16 @@ namespace HuntroxGames.Utils
         #if COMMANDS_CONSOLE
         
         private Vector2 scroll;
-        private List<string> logList = new List<string>();
+        private readonly List<string> logList = new List<string>();
         private string commandInput = "";
         private GUISkin consoleStyle;
-        private int lastCommandIndex;
+        
         private Rect logBoxRect = new Rect(5, -250, Screen.width - 10, 200);
         private Rect viewRect;
         private float animationDuration = 0;
         private bool isActive;
         
-        private bool setScroll = false;
+        private bool updateScrollView = false;
         private Rect textBoxRect;
         private bool markFocus;
         private ConsoleHistory consoleHistory =new ConsoleHistory();
@@ -51,8 +51,8 @@ namespace HuntroxGames.Utils
 
         private void OnEnable()
         {
-            if(receiveUnityLogMessages)
-                Application.logMessageReceivedThreaded+= OnUnityLogMessageReceived;
+            if (receiveUnityLogMessages)
+                Application.logMessageReceivedThreaded += OnUnityLogMessageReceived;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -127,14 +127,12 @@ namespace HuntroxGames.Utils
             logList.Add(log);
         }
         
-        
         [ConsoleCommand]
         private void ClearConsole()
         {
             logList.Clear();
             consoleHistory.Clear();
-            setScroll = true;
-            
+            updateScrollView = true;
         }
 
         [ConsoleCommand("Help","",false)]
@@ -143,9 +141,16 @@ namespace HuntroxGames.Utils
             var com = CommandsHandler.GETConsoleCommandDescription();
             foreach (var command in com)
             {
-                InsertLog(command.command+" "+command.description);
+                string parameters = " ";
+
+                if (!command.parametersNames.IsNullOrEmpty())
+                    foreach (var parameter in command.parametersNames)
+                        parameters += parameter + " ";
+
+                var parametersColor = ColorUtility.ToHtmlStringRGBA(new Color(1, 1, 1, 0.25f));
+                var text = $"{command.command}<color=#{parametersColor}>{parameters}</color>: {command.description}";
+                InsertLog(text);
             }
-            lastCommandIndex = logList.Count;
         }
         
         public void OnGUI()
@@ -175,10 +180,10 @@ namespace HuntroxGames.Utils
                 Rect labelRect = new Rect(scrollRect.x + 5, logBoxRect.y+20 * i, viewRect.width - 30, 20);
                 GUI.Label(labelRect, logList[i]);
             }
-            if (setScroll)
+            if (updateScrollView)
             {
                 GUI.ScrollTo(new Rect(scrollRect.x,viewRect.height,viewRect.width,viewRect.height));
-                setScroll = false;
+                updateScrollView = false;
             }
             GUI.EndScrollView();
 
@@ -278,11 +283,10 @@ namespace HuntroxGames.Utils
             consoleHistory.Add(commandInput);
             if(fetchMode.HasFlag(FetchMode.BeforeExecutingAnyCommand))
                 CommandsHandler.FetchCommandAttributes();
-            lastCommandIndex = logList.Count;
             var command = ConsoleCommandHelper.SplitCommand(commandInput);
             CommandsHandler.ExecuteCommand(command.cmd,command.param,InsertLog);
             commandInput = "";
-            setScroll = true;
+            updateScrollView = true;
         }
 
 

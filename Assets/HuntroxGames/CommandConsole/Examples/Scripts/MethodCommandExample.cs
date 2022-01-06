@@ -13,16 +13,17 @@ namespace HuntroxGames.Utils
         [ConsoleCommand]
         public void KillAllEnemies() => Debug.Log("DIE DIE DIE!");
         
-        [ConsoleCommand(command: "SetPlayerGold", description: "[string] [int]", helpMenu: true)]
+        [ConsoleCommand(command: "SetPlayerGold")]
         public void MethodWithArguments(string playerName, int gold) => Debug.Log($"player {playerName}'s gold: {gold}");
 
         [ConsoleCommand("ReloadScene")]
         private void Reload() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
+        
+        
         [ConsoleCommand("AddNumbers")]
         // private int AddNumbers(int[] numbers) => numbers.Sum();
-        private int AddNumbers(int a, int b) => a + b;
-
+        private int AddNumbers(int numberA, int numberB) => numberA + numberB;
         #region UnityLogMessages
 
         [ConsoleCommand]
@@ -35,29 +36,29 @@ namespace HuntroxGames.Utils
         #endregion
         #region Vector2-3 and Vector2Int-3Int
 
-        [ConsoleCommand("SetPosition","[x,y,z]")]
+        [ConsoleCommand("SetPosition")]
         public void SetPosition(Vector3 position)
         {
             Debug.Log($"Vector3 {position}");
             targetPosition = position;
         }
         [ConsoleCommand("SetPositionV2")]
-        public void SetPosition(Vector2 position)
+        public void SetPosition(Vector2 vector2Position)
         {
-            Debug.Log($"Vector2 {position}");
-            targetPosition = position;
+            Debug.Log($"Vector2 {vector2Position}");
+            targetPosition = vector2Position;
         }
-        [ConsoleCommand("SetPositionV3INT","[x,y,z]:int")]
-        public void SetPosition(Vector3Int position)
+        [ConsoleCommand("SetPositionV3INT")]
+        public void SetPosition(Vector3Int vector3IntPosition)
         {
-            Debug.Log($"Vector3Int {position}");
-            targetPosition = position;
+            Debug.Log($"Vector3Int {vector3IntPosition}");
+            targetPosition = vector3IntPosition;
         }
         [ConsoleCommand("SetPositionV2Int")]
-        public void SetPosition(Vector2Int position)
+        public void SetPosition(Vector2Int vector2IntPosition)
         {
-            Debug.Log($"Vector2Int {position}");
-            targetPosition = (Vector2)position;
+            Debug.Log($"Vector2Int {vector2IntPosition}");
+            targetPosition = (Vector2)vector2IntPosition;
         }
         #endregion
     }
