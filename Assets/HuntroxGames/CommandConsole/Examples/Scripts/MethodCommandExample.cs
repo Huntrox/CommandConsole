@@ -61,5 +61,15 @@ namespace HuntroxGames.Utils
             targetPosition = (Vector2)vector2IntPosition;
         }
         #endregion
+
+        #region CommandOptionsCallback
+        [ConsoleCommand]
+        public CommandOptionsCallback TeleportTo()
+             => new CommandOptionsCallback(
+                 new CommandOption("Wolfden", ()=>Debug.Log("teleported to Wolfden")),
+                 new CommandOption("Sudbury",()=>Debug.Log("teleported to Sudbury")),
+                 new CommandOption("Hogsfeet",()=>Debug.Log("teleported to Hogsfeet")));
+        
+        #endregion
     }
 }
