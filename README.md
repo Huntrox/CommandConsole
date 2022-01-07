@@ -19,7 +19,7 @@ simply add ConsoleCommandAttribute to any field property or method
     - default value: **(field, property, method) name**
 2. `description:` command description in the help commands list
     - default value: **string.empty**
-3. `helpMenu:` the option to include this command in the help commands listj
+3. `helpMenu:` the option to include this command in the help commands list
     - default value: **True**
 
 ## Examples
