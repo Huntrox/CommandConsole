@@ -69,7 +69,7 @@ namespace HuntroxGames.Utils
 
         public void Clear()
         {
-            staticMemberInfos.Clear();
+            //staticMemberInfos.Clear();
             commandInfo.Clear();
         }
     }

@@ -40,18 +40,50 @@ namespace HuntroxGames.Utils
             var parameters = new object[methodParameters.Length];
             for (var i = 0; i < parameters.Length; i++)
             {
-                // if(methodParameters[i])
+                var isArray = methodParameters[i].GetCustomAttribute(typeof(ParamArrayAttribute)) != null;
+                if (isArray)
+                {
+                    var startIndex = i;
+                    var end = valueParams.Length;
+                    var length = end - startIndex;
+                    var valueLeft = valueParams.Skip(startIndex).Take(length).ToArray();
+                    return  ValueToParamsArray(methodParameters[i], valueLeft);
+                }
+
                 if (i >= valueParams.Length)
                     parameters[i] = null;
                 else
                     parameters[i] = ParseArgumentValue((string) valueParams[i], methodParameters[i].ParameterType);
-                
+
             }
             return parameters;
         }
-       
+
+        private static object[] ValueToParamsArray(ParameterInfo parameterInfo, object[] valueParams)
+        {
+            var parameters = new object[valueParams.Length];
+            var arrayElementType = parameterInfo.ParameterType.GetElementType();
+            if (arrayElementType == typeof(int))
+            {
+                object[] intArray = {ValueToIntArray(valueParams)};
+                return intArray;
+            }
+            for (var i = 0; i < parameters.Length; i++)
+                    parameters[i] = ParseArgumentValue((string) valueParams[i], arrayElementType);
+
+            return parameters;
+        }
+
+        private static int[] ValueToIntArray(object[] valueParams)
+        {
+            int[] intParams = new int[valueParams.Length];
+            for (var i = 0; i < intParams.Length; i++)
+                intParams[i] = (int)ParseArgumentValue((string) valueParams[i], typeof(int));
+            return intParams;
+        }
         internal static object ParseArgumentValue(string value, Type type)
         {
+            Debug.Log(type.Name);
             if (value.IsNullOrEmpty() || value.IsNullOrWhiteSpace())
                 return null;
             
@@ -84,7 +116,11 @@ namespace HuntroxGames.Utils
             {
                 return  Enum.Parse(type, value, true);
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
+
             return null;
         }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace HuntroxGames.Utils
@@ -22,8 +23,8 @@ namespace HuntroxGames.Utils
         
         
         [ConsoleCommand("AddNumbers")]
-        // private int AddNumbers(int[] numbers) => numbers.Sum();
-        private int AddNumbers(int numberA, int numberB) => numberA + numberB;
+         private int AddNumbers(params int[] numbers) => numbers.Sum();
+        //private int AddNumbers(int numberA, int numberB) => numberA + numberB;
         #region UnityLogMessages
 
         [ConsoleCommand]

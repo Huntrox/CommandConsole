@@ -28,11 +28,16 @@ namespace HuntroxGames.Utils
             return list;
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private static void OnInitialize()
+        {
+            GetStaticClass();
+        }
         public static void FetchCommandAttributes()
         {
             var behaviours = Object.FindObjectsOfType<MonoBehaviour>();
             Clear();
-            GetStaticClass();
+   
             foreach (var behaviour in behaviours)
             {
                 GetFields(behaviour);
