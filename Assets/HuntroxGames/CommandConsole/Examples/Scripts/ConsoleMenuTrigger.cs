@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 #endif
 namespace HuntroxGames.Utils
 {
-    public class ToggleConsoleMenu : MonoBehaviour
+    public class ConsoleMenuTrigger : MonoBehaviour
     {
 
         void Update()
@@ -12,11 +12,10 @@ namespace HuntroxGames.Utils
 #if ENABLE_INPUT_SYSTEM
             if (Keyboard.current.backquoteKey.wasPressedThisFrame)
             {
-                CommandsConsole.Instance.Console();
+                CommandConsole.Instance.Console();
                 return;
             }
 #endif
-
 #if ENABLE_LEGACY_INPUT_MANAGER
             if (Input.GetKeyDown(KeyCode.BackQuote))
                 CommandConsole.Instance.Console();

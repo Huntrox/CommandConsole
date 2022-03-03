@@ -1,8 +1,6 @@
 #define COMMANDS_CONSOLE
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,36 +9,46 @@ namespace HuntroxGames.Utils
 {
     public class CommandConsole : Singleton<CommandConsole>
     {
-
         [Flags]
         public enum FetchMode
         {
             OnSceneLoad = 1 << 0,
-            BeforeShowingTheConsole = 1 << 1,
+            OnConsoleTrigger = 1 << 1,
             BeforeExecutingAnyCommand = 1 << 2,
         }
-        [SerializeField] private bool receiveUnityLogMessages;
-        [SerializeField] private FetchMode fetchMode= FetchMode.OnSceneLoad;
         
-        
-        
-        #if COMMANDS_CONSOLE
-        
+        [SerializeField, Tooltip("Receive Unity Log Messages")]
+        private bool unityLogMessages;
+
+        [SerializeField] private FetchMode fetchMode = FetchMode.OnSceneLoad;
+
+
+#if COMMANDS_CONSOLE
+
         private Vector2 scroll;
         private readonly List<string> logList = new List<string>();
         private string commandInput = "";
         private GUISkin consoleStyle;
-        
+
         private Rect logBoxRect = new Rect(5, -250, Screen.width - 10, 200);
         private Rect viewRect;
         private float animationDuration = 0;
         private bool isActive;
-        
+
         private bool updateScrollView = false;
         private Rect textBoxRect;
         private bool markFocus;
-        private ConsoleHistory consoleHistory =new ConsoleHistory();
-        private CommandSuggestion commandSuggestion =new CommandSuggestion();
+        private readonly ConsoleHistory consoleHistory = new ConsoleHistory();
+        private readonly CommandSuggestion commandSuggestion = new CommandSuggestion();
+
+        public delegate void OnConsole(bool value);
+
+        /// <summary>
+        /// this event will rise everytime when the console opens or close
+        /// Usage Example: add listener and use it to pause/unpause the game
+        /// </summary>
+        public event OnConsole onConsole;
+
         protected override void Awake()
         {
             base.Awake();
@@ -51,7 +59,7 @@ namespace HuntroxGames.Utils
 
         private void OnEnable()
         {
-            if (receiveUnityLogMessages)
+            if (unityLogMessages)
                 Application.logMessageReceivedThreaded += OnUnityLogMessageReceived;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -76,7 +84,6 @@ namespace HuntroxGames.Utils
                     InsertLog($"<color=red>{condition}</color>");
                     break;
             }
-       
         }
 
         private void OnDisable()
@@ -91,7 +98,7 @@ namespace HuntroxGames.Utils
                 CommandsHandler.FetchCommandAttributes();
         }
 
-        private void Start() 
+        private void Start()
             => InsertLog("<color=green>type <color=white><b>'Help'</b></color> for a list of commands</color>");
 
         private void Update()
@@ -102,9 +109,7 @@ namespace HuntroxGames.Utils
                 animationDuration -= 0.2f * Time.deltaTime;
             animationDuration = Mathf.Clamp(animationDuration, 0, 1);
             logBoxRect.y = Mathf.Lerp(logBoxRect.y, isActive ? 5 : -(logBoxRect.height + 50), animationDuration);
-  
         }
-
 
 
         public void Console()
@@ -113,12 +118,15 @@ namespace HuntroxGames.Utils
             if (isActive)
             {
                 markFocus = true;
-                if(fetchMode.HasFlag(FetchMode.BeforeShowingTheConsole))
+                if (fetchMode.HasFlag(FetchMode.OnConsoleTrigger))
                     CommandsHandler.FetchCommandAttributes();
-            }
+            }else
+                GUI.UnfocusWindow();
+
+            onConsole?.Invoke(isActive);
         }
-        
-        private void InsertLog(string text,bool clearAllBefore = false)
+
+        private void InsertLog(string text, bool clearAllBefore = false)
         {
             if (clearAllBefore)
                 ClearConsole();
@@ -126,7 +134,7 @@ namespace HuntroxGames.Utils
             var log = $"[<color=yellow>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] {text}";
             logList.Add(log);
         }
-        
+
         [ConsoleCommand]
         private void ClearConsole()
         {
@@ -135,7 +143,7 @@ namespace HuntroxGames.Utils
             updateScrollView = true;
         }
 
-        [ConsoleCommand("Help","",false)]
+        [ConsoleCommand("Help", "", false)]
         private void HelpCommand()
         {
             var com = CommandsHandler.GETConsoleCommandDescription();
@@ -152,7 +160,7 @@ namespace HuntroxGames.Utils
                 InsertLog(text);
             }
         }
-        
+
         public void OnGUI()
         {
             if (consoleStyle == null)
@@ -162,8 +170,8 @@ namespace HuntroxGames.Utils
             var style = new GUIStyle();
             logBoxRect.width = Screen.width - 10;
             logBoxRect.height = logBoxRect.height;
-            
-            
+
+
             GUI.Box(logBoxRect, "Console");
             viewRect = new Rect(logBoxRect);
             var scrollRect = new Rect(logBoxRect);
@@ -177,45 +185,45 @@ namespace HuntroxGames.Utils
 
             for (int i = 0; i < logList.Count; i++)
             {
-                Rect labelRect = new Rect(scrollRect.x + 5, logBoxRect.y+20 * i, viewRect.width - 30, 20);
+                Rect labelRect = new Rect(scrollRect.x + 5, logBoxRect.y + 20 * i, viewRect.width - 30, 20);
                 GUI.Label(labelRect, logList[i]);
             }
+
             if (updateScrollView)
             {
-                GUI.ScrollTo(new Rect(scrollRect.x,viewRect.height,viewRect.width,viewRect.height));
+                GUI.ScrollTo(new Rect(scrollRect.x, viewRect.height, viewRect.width, viewRect.height));
                 updateScrollView = false;
             }
+
             GUI.EndScrollView();
 
-   
-            
-            GUI.Box(new Rect(logBoxRect.x, logBoxRect.y + logBoxRect.height+2, logBoxRect.width * 0.35f, 22), "");
+
+            GUI.Box(new Rect(logBoxRect.x, logBoxRect.y + logBoxRect.height + 2, logBoxRect.width * 0.35f, 22), "");
             GUI.backgroundColor = new Color(0, 0, 0, 0);
 
 
-            
             var color = GUI.color;
-            textBoxRect = new Rect(logBoxRect.x + 5, logBoxRect.y + logBoxRect.height+2, (logBoxRect.width * 0.35f) - 5, 20f);
-            GUI.color = consoleStyle.customStyles[3].normal.textColor; 
-            if(!commandInput.IsNullOrEmpty())
-                GUI.Label(textBoxRect,commandSuggestion.AutoCompleteSuggestion);
+            textBoxRect = new Rect(logBoxRect.x + 5, logBoxRect.y + logBoxRect.height + 2,
+                (logBoxRect.width * 0.35f) - 5, 20f);
+            GUI.color = consoleStyle.customStyles[3].normal.textColor;
+            if (!commandInput.IsNullOrEmpty())
+                GUI.Label(textBoxRect, commandSuggestion.AutoCompleteSuggestion);
 
             GUI.color = consoleStyle.textField.normal.textColor;
             GUI.SetNextControlName("commandInputField");
             commandInput = GUI.TextField(textBoxRect, commandInput);
             commandSuggestion.SetInput(commandInput);
             GUI.color = color;
-            
+
             if (markFocus)
             {
                 GUI.FocusControl("commandInputField");
                 markFocus = false;
             }
-                
-            
+
             var current = Event.current;
 
-            if (current.type == EventType.Layout||!isActive)
+            if (current.type == EventType.Layout || !isActive)
                 return;
 
             if (current.isKey)
@@ -242,7 +250,6 @@ namespace HuntroxGames.Utils
                 }
             }
         }
-
         private void TextFieldLineEnd()
         {
             GUI.FocusControl("commandInputField");
@@ -281,10 +288,10 @@ namespace HuntroxGames.Utils
         {
             InsertLog(commandInput);
             consoleHistory.Add(commandInput);
-            if(fetchMode.HasFlag(FetchMode.BeforeExecutingAnyCommand))
+            if (fetchMode.HasFlag(FetchMode.BeforeExecutingAnyCommand))
                 CommandsHandler.FetchCommandAttributes();
             var command = ConsoleCommandHelper.SplitCommand(commandInput);
-            CommandsHandler.ExecuteCommand(command.cmd,command.param,InsertLog);
+            CommandsHandler.ExecuteCommand(command.cmd, command.param, InsertLog);
             commandInput = "";
             updateScrollView = true;
         }
@@ -293,9 +300,11 @@ namespace HuntroxGames.Utils
 #endif
     }
 
-    public enum ConsoleNavigation { Up, Down, Left,Right }
-    public struct ConsoleLog
+    public enum ConsoleNavigation
     {
-        
+        Up,
+        Down,
+        Left,
+        Right
     }
 }
