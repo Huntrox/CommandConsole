@@ -20,6 +20,14 @@ namespace HuntroxGames.Utils
             key = key.ToUpper();
             if (options.IsNullOrEmpty())
                 return false;
+            if (int.TryParse(key, out var index))
+            {
+                if (index < options.Count)
+                {
+                    options.ToArray()[index].Value.optionCallback?.Invoke();
+                    return true;
+                }
+            }
             if (options.TryGetValue(key, out var option))
             {
                 option.optionCallback?.Invoke();

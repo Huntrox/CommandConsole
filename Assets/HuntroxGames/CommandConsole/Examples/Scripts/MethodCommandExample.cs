@@ -22,7 +22,7 @@ namespace HuntroxGames.Utils
 
         
         
-        [ConsoleCommand("AddNumbers")]
+        [ConsoleCommand("AddNumbers",MonoObjectExecutionType.FirstInHierarchy)]
          private int AddNumbers(params int[] numbers) => numbers.Sum();
         //private int AddNumbers(int numberA, int numberB) => numberA + numberB;
         #region UnityLogMessages
@@ -37,7 +37,7 @@ namespace HuntroxGames.Utils
         #endregion
         #region Vector2-3 and Vector2Int-3Int
 
-        [ConsoleCommand("SetPosition")]
+        [ConsoleCommand("SetPosition",MonoObjectExecutionType.Option)]
         public void SetPosition(Vector3 position)
         {
             Debug.Log($"Vector3 {position}");

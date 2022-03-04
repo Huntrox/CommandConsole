@@ -83,7 +83,7 @@ namespace HuntroxGames.Utils
         }
         internal static object ParseArgumentValue(string value, Type type)
         {
-            Debug.Log(type.Name);
+            //Debug.Log(type.Name);
             if (value.IsNullOrEmpty() || value.IsNullOrWhiteSpace())
                 return null;
             

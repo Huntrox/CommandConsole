@@ -35,7 +35,8 @@ namespace HuntroxGames.Utils
         }
         public static void FetchCommandAttributes()
         {
-            var behaviours = Object.FindObjectsOfType<MonoBehaviour>();
+            var behaviours = Object.FindObjectsOfType<MonoBehaviour>()
+                .OrderBy(m => m.transform.GetSiblingIndex()).ToArray();
             Clear();
    
             foreach (var behaviour in behaviours)
@@ -74,23 +75,26 @@ namespace HuntroxGames.Utils
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
             Action<string, bool> onGetValueCallback)
         {
+
+
             foreach (var field in FieldCommands.ExecutableCommands(fieldName))
             {
+                var fieldValue = field.value.memberInfo;
                 if (arguments.IsNullOrEmpty())
                 {
-                    var log = $"{field.value.DeclaringType?.Name}.{field.value.Name} : <b>{field.value.GetValue(field.key)}</b>";
+                    var log = $"{fieldValue.DeclaringType?.Name}.{fieldValue.Name} : <b>{fieldValue.GetValue(field.key)}</b>";
                     onGetValueCallback?.Invoke(log, false);
                     return;
                 }
 
-                if (!field.value.IsLiteral)
+                if (!fieldValue.IsLiteral)
                 {
-                    var value = ConsoleCommandHelper.ParseArgumentValue((string) arguments[0], field.value.FieldType);
-                    field.value.SetValue(field.key, value);
+                    var value = ConsoleCommandHelper.ParseArgumentValue((string) arguments[0], fieldValue.FieldType);
+                    fieldValue.SetValue(field.key, value);
                 }
                 else
                 {
-                    var log = $"Cannot set a constant field {field.value.Name}";
+                    var log = $"Cannot set a constant field {fieldValue.Name}";
                     onGetValueCallback?.Invoke(log, false);
                 }
             }
@@ -102,29 +106,30 @@ namespace HuntroxGames.Utils
             foreach (var property in PropertyCommands.ExecutableCommands(propertyName))
             {
                 //if no arguments where provided get the value 
+                var propertyValue = property.value.memberInfo;
                 if (arguments.IsNullOrEmpty())
                 {
-                    if (property.value.CanRead)
+                    if (propertyValue.CanRead)
                     {
                         var log =
-                            $"{property.value.DeclaringType?.Name}.{property.value.Name} : <b>{property.value.GetValue(property.key)}</b>";
+                            $"{propertyValue.DeclaringType?.Name}.{propertyValue.Name} : <b>{propertyValue.GetValue(property.key)}</b>";
                         onGetValueCallback?.Invoke(log, false);
                     }
                     else
                         Debug.LogWarning(
-                            $"property {property.value.DeclaringType?.Name}.{property.value.Name} does not have a getter!");
+                            $"property {propertyValue.DeclaringType?.Name}.{propertyValue.Name} does not have a getter!");
                 }
                 else//otherwise set it
                 {
-                    if (property.value.CanWrite)
+                    if (propertyValue.CanWrite)
                     {
                         var value = ConsoleCommandHelper.ParseArgumentValue((string) arguments[0],
-                            property.value.PropertyType);
-                        property.value.SetValue(property.key, value);
+                            propertyValue.PropertyType);
+                        propertyValue.SetValue(property.key, value);
                     }
                     else
                         Debug.LogWarning(
-                            $"property {property.value.DeclaringType?.Name}.{property.value.Name} does not have a setter!");
+                            $"property {propertyValue.DeclaringType?.Name}.{propertyValue.Name} does not have a setter!");
                 }
             }
         }
@@ -132,28 +137,53 @@ namespace HuntroxGames.Utils
         private static void InvokeMethodsCommands(string methodName, object[] arguments,
             Action<string, bool> onGetValueCallback)
         {
-            foreach (var method in MethodCommands.ExecutableCommands(methodName))
+            void Execute(ExecutableCommand<MethodInfo> method)
             {
-                object[] param = ConsoleCommandHelper.ToMethodParams(method.value, arguments);
-                var returnValue = method.value.Invoke(method.key, param);
-                if (method.value.ReturnType != typeof(void))
+                var methodValue = method.value.memberInfo;
+                object[] param = ConsoleCommandHelper.ToMethodParams(methodValue, arguments);
+                var returnValue = method.value.memberInfo.Invoke(method.key, param);
+                if (methodValue.ReturnType != typeof(void))
                 {
-                    if (method.value.ReturnType == typeof(CommandOptionsCallback))
+                    if (methodValue == typeof(CommandOptionsCallback))
                     {
-                        optionsCallback = (CommandOptionsCallback)returnValue;
-                        var optionsLog = $"Options: ";
-                        foreach (var option in optionsCallback.options)
-                        {
-                            optionsLog += $"[{option.Value.optionName}] ";
-                        }
-                        onGetValueCallback?.Invoke(optionsLog, false);
-                        return;;
+                        SetupOptionsCallback((CommandOptionsCallback)returnValue,onGetValueCallback);
+                        return;
                     }
                     var log =
-                        $"{method.value.DeclaringType?.Name}.{method.value.Name} : <b>{returnValue}</b>";
+                        $"{methodValue.DeclaringType?.Name}.{methodValue.Name} : <b>{returnValue}</b>";
                     onGetValueCallback?.Invoke(log, false);
                 }
             }
+
+            //Execute all static members
+            foreach (var method in MethodCommands.ExecutableStaticCommands(methodName))
+                Execute(method);
+
+            var options = new List<CommandOption>();
+            foreach (var method in MethodCommands.ExecutableCommands(methodName))
+            {
+                if (!method.isOptions)
+                    Execute(method);
+                else
+                    options.Add(new CommandOption(method.key.name,()=>Execute(method)));
+            }
+            
+            if (!options.IsNullOrEmpty())
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()),onGetValueCallback);
+        }
+
+        private static void SetupOptionsCallback(CommandOptionsCallback optnsCallback,
+            Action<string, bool> onGetValueCallback)
+        {
+            optionsCallback = optnsCallback;
+            var optionsLog = $"Options: ";
+            var index = 0;
+            foreach (var option in optionsCallback.options)
+            {
+                optionsLog += $"{option.Value.optionName}[{index}] ";
+                index++;
+            }
+            onGetValueCallback?.Invoke(optionsLog, false);
         }
 
         private static void GetFields(Object behaviour)
