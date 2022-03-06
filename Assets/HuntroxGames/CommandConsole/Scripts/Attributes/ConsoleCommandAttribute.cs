@@ -36,8 +36,14 @@ namespace HuntroxGames.Utils
             this.command = command;
             this.objectExecutionType = objectExecutionType;
         }
-        public ConsoleCommandAttribute(string command, string description = "", 
-            bool helpMenu = true,MonoObjectExecutionType objectExecutionType= MonoObjectExecutionType.FirstInHierarchy)
+        public ConsoleCommandAttribute(string command,string description = "",MonoObjectExecutionType objectExecutionType = MonoObjectExecutionType.FirstInHierarchy)
+        {
+            this.command = command;
+            this.description = description;
+            this.objectExecutionType = objectExecutionType;
+        }
+        public ConsoleCommandAttribute(string command, string description, 
+            bool helpMenu ,MonoObjectExecutionType objectExecutionType)
         {
             this.command = command;
             this.description = description;

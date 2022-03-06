@@ -72,18 +72,19 @@ namespace HuntroxGames.Utils
             if(rebuildRequired)
                 FetchCommandAttributes();
         }
+
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
             Action<string, bool> onGetValueCallback)
         {
 
-
-            foreach (var field in FieldCommands.ExecutableCommands(fieldName))
+            void Execute(ExecutableCommand<FieldInfo> field)
             {
                 var fieldValue = field.value.memberInfo;
                 if (arguments.IsNullOrEmpty())
                 {
-                    var log = $"{fieldValue.DeclaringType?.Name}.{fieldValue.Name} : <b>{fieldValue.GetValue(field.key)}</b>";
-                    onGetValueCallback?.Invoke(log, false);
+                    var log =
+                        $"{fieldValue.DeclaringType?.Name}.{fieldValue.Name} : <b>{fieldValue.GetValue(field.key)}</b>";
+                    onGetValueCallback?.Invoke(log, true);
                     return;
                 }
 
@@ -95,15 +96,29 @@ namespace HuntroxGames.Utils
                 else
                 {
                     var log = $"Cannot set a constant field {fieldValue.Name}";
-                    onGetValueCallback?.Invoke(log, false);
+                    onGetValueCallback?.Invoke(log, true);
                 }
             }
+
+            foreach (var field in FieldCommands.ExecutableStaticCommands(fieldName))
+                Execute(field);
+
+            var options = new List<CommandOption>();
+            foreach (var field in FieldCommands.ExecutableCommands(fieldName))
+            {
+                if (!field.isOptions)
+                    Execute(field);
+                else
+                    options.Add(new CommandOption(field.key.name, () => Execute(field)));
+            }
+            if (!options.IsNullOrEmpty())
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
         }
 
         private static void ExecutePropertiesCommands(string propertyName, object[] arguments,
             Action<string, bool> onGetValueCallback)
         {
-            foreach (var property in PropertyCommands.ExecutableCommands(propertyName))
+            void Execute(ExecutableCommand<PropertyInfo> property)
             {
                 //if no arguments where provided get the value 
                 var propertyValue = property.value.memberInfo;
@@ -113,7 +128,7 @@ namespace HuntroxGames.Utils
                     {
                         var log =
                             $"{propertyValue.DeclaringType?.Name}.{propertyValue.Name} : <b>{propertyValue.GetValue(property.key)}</b>";
-                        onGetValueCallback?.Invoke(log, false);
+                        onGetValueCallback?.Invoke(log, true);
                     }
                     else
                         Debug.LogWarning(
@@ -132,6 +147,20 @@ namespace HuntroxGames.Utils
                             $"property {propertyValue.DeclaringType?.Name}.{propertyValue.Name} does not have a setter!");
                 }
             }
+            
+            foreach (var property in PropertyCommands.ExecutableStaticCommands(propertyName))
+                Execute(property);
+            var options = new List<CommandOption>();
+            foreach (var property in PropertyCommands.ExecutableCommands(propertyName))
+            {
+                if (!property.isOptions)
+                    Execute(property);
+                else
+                    options.Add(new CommandOption(property.key.name, () => Execute(property)));
+            }
+            if (!options.IsNullOrEmpty())
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
+            
         }
 
         private static void InvokeMethodsCommands(string methodName, object[] arguments,
@@ -146,12 +175,13 @@ namespace HuntroxGames.Utils
                 {
                     if (methodValue == typeof(CommandOptionsCallback))
                     {
-                        SetupOptionsCallback((CommandOptionsCallback)returnValue,onGetValueCallback);
+                        SetupOptionsCallback((CommandOptionsCallback) returnValue, onGetValueCallback);
                         return;
                     }
+
                     var log =
                         $"{methodValue.DeclaringType?.Name}.{methodValue.Name} : <b>{returnValue}</b>";
-                    onGetValueCallback?.Invoke(log, false);
+                    onGetValueCallback?.Invoke(log, true);
                 }
             }
 
@@ -165,11 +195,11 @@ namespace HuntroxGames.Utils
                 if (!method.isOptions)
                     Execute(method);
                 else
-                    options.Add(new CommandOption(method.key.name,()=>Execute(method)));
+                    options.Add(new CommandOption(method.key.name, () => Execute(method)));
             }
-            
+
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()),onGetValueCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
         }
 
         private static void SetupOptionsCallback(CommandOptionsCallback optnsCallback,

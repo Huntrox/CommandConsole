@@ -126,12 +126,16 @@ namespace HuntroxGames.Utils
             onConsole?.Invoke(isActive);
         }
 
-        private void InsertLog(string text, bool clearAllBefore = false)
+
+        private void InsertLog(string text, bool dateFormat)
+            => InsertLog(text, dateFormat, false);
+        private void InsertLog(string text,bool dateFormat = true, bool clearAllBefore = false)
         {
             if (clearAllBefore)
                 ClearConsole();
             var date = DateTime.Now;
-            var log = $"[<color=yellow>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] {text}";
+            var dateText = dateFormat ? $"[<color=yellow>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>]" : "          ";
+            var log = $"{dateText} {text}";
             logList.Add(log);
         }
 
@@ -143,7 +147,7 @@ namespace HuntroxGames.Utils
             updateScrollView = true;
         }
 
-        [ConsoleCommand("Help", "", false)]
+        [ConsoleCommand("Help", "", false, MonoObjectExecutionType.FirstInHierarchy)]
         private void HelpCommand()
         {
             var com = CommandsHandler.GETConsoleCommandDescription();
