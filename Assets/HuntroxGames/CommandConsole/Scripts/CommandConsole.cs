@@ -1,6 +1,7 @@
 #define COMMANDS_CONSOLE
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -179,18 +180,24 @@ namespace HuntroxGames.Utils
             GUI.Box(logBoxRect, "Console");
             viewRect = new Rect(logBoxRect);
             var scrollRect = new Rect(logBoxRect);
-            viewRect.height = 20 * logList.Count;
             viewRect.width -= 20;
+            var rectWidth = viewRect.width - 30;
+            viewRect.height = ConsoleCommandHelper.GetLogsHeight(logList,rectWidth,consoleStyle.font);
             viewRect.y -= 5;
             //viewRect.x += 5;
             scrollRect.y += 25;
             scrollRect.height -= 35;
             scroll = GUI.BeginScrollView(scrollRect, scroll, viewRect);
+            var labelY = logBoxRect.y;
 
             for (int i = 0; i < logList.Count; i++)
             {
-                Rect labelRect = new Rect(scrollRect.x + 5, logBoxRect.y + 20 * i, viewRect.width - 30, 20);
+                var textWidth = ConsoleCommandHelper.GetLogWidth(logList[i], consoleStyle.font);
+                var rectHeight = (textWidth) <= rectWidth ? 20 : 40;
+                
+                Rect labelRect = new Rect(scrollRect.x + 5,labelY , rectWidth, rectHeight);
                 GUI.Label(labelRect, logList[i]);
+                labelY += rectHeight;
             }
 
             if (updateScrollView)
@@ -216,6 +223,8 @@ namespace HuntroxGames.Utils
             GUI.color = consoleStyle.textField.normal.textColor;
             GUI.SetNextControlName("commandInputField");
             commandInput = GUI.TextField(textBoxRect, commandInput);
+            
+
             commandSuggestion.SetInput(commandInput);
             GUI.color = color;
 
