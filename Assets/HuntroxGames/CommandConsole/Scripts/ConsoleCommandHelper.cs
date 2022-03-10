@@ -199,7 +199,30 @@ namespace HuntroxGames.Utils
                     textWidth += info.advance;
             return textWidth;
         }
-        
+
+        public static string GetMemberInfo<T>(ExecutableCommand<T> member,CommandConsole.ObjectNameDisplayType displayType) where T: MemberInfo
+        {
+            var format = "";
+            var hasObject = displayType.HasFlag(CommandConsole.ObjectNameDisplayType.GameObject);
+            var hasClass = displayType.HasFlag(CommandConsole.ObjectNameDisplayType.Class);
+            var hasMember = displayType.HasFlag(CommandConsole.ObjectNameDisplayType.Member);
+
+            if (hasObject && member.key !=null)
+            {
+                format += $"{member.key.name}";
+                format += hasClass || hasMember? ".":"";
+            }
+            if (hasClass)
+            {
+                format += $"{member.value.memberInfo.DeclaringType?.Name}";
+                format += hasMember? ".":""; 
+            }
+            if (hasMember)
+            {
+                format += $"{member.value.memberInfo.Name}";
+            }
+            return format;
+        }
         
     }
 }

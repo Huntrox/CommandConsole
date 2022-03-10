@@ -11,18 +11,51 @@ namespace HuntroxGames.Utils
     public class CommandConsole : Singleton<CommandConsole>
     {
         [Flags]
-        public enum FetchMode
+        private enum FetchMode
         {
             OnSceneLoad = 1 << 0,
             OnConsoleTrigger = 1 << 1,
             BeforeExecutingAnyCommand = 1 << 2,
         }
-        
+
+        private enum InputPrefixStyle
+        {
+            [InspectorName("[HH:MM:SS] Text")] Date,
+            [InspectorName("- Text")] Dash,
+            [InspectorName("Text")] None,
+            Custom
+        }
+
+        [Flags]
+        public enum ObjectNameDisplayType
+        {
+            [InspectorName("GameObject Name")]
+            GameObject = 1 << 0,
+            [InspectorName("Class Name")]
+            Class = 1 << 1,
+            [InspectorName("Class Member Name")]
+            Member = 1 << 2,
+        }
+
         [SerializeField, Tooltip("Receive Unity Log Messages")]
         private bool unityLogMessages;
 
         [SerializeField] private FetchMode fetchMode = FetchMode.OnSceneLoad;
 
+        [Header("Style")] [SerializeField] private Font font;
+        [SerializeField] private Color commandInputFieldColor = new Color32(65, 183, 25, 255);
+        [SerializeField] private Color textColor = Color.white;
+        [SerializeField] private Color parameterColor = new Color(1, 1, 1, 0.25f);
+        [SerializeField] private Color autoCompleteColor = new Color(1, 1, 1, 0.25f);
+        [SerializeField] private ObjectNameDisplayType objectNameDisplay = ObjectNameDisplayType.GameObject | ObjectNameDisplayType.Member;
+
+        [Header("Input Style")] [SerializeField]
+        private InputPrefixStyle inputPrefixStyle = InputPrefixStyle.Date;
+
+        [SerializeField] private Color inputPrefixColor = Color.yellow;
+        [SerializeField] private string customInputPrefix = "";
+
+        public ObjectNameDisplayType ObjectNameDisplay => objectNameDisplay;
 
 #if COMMANDS_CONSOLE
 
@@ -121,7 +154,8 @@ namespace HuntroxGames.Utils
                 markFocus = true;
                 if (fetchMode.HasFlag(FetchMode.OnConsoleTrigger))
                     CommandsHandler.FetchCommandAttributes();
-            }else
+            }
+            else
                 GUI.UnfocusWindow();
 
             onConsole?.Invoke(isActive);
@@ -130,14 +164,38 @@ namespace HuntroxGames.Utils
 
         private void InsertLog(string text, bool dateFormat)
             => InsertLog(text, dateFormat, false);
-        private void InsertLog(string text,bool dateFormat = true, bool clearAllBefore = false)
+
+        private void InsertLog(string text, bool dateFormat = true, bool clearAllBefore = false)
         {
             if (clearAllBefore)
                 ClearConsole();
-            var date = DateTime.Now;
-            var dateText = dateFormat ? $"[<color=yellow>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>]" : "          ";
-            var log = $"{dateText} {text}";
+            var dateText = FormatInput(dateFormat);
+            var log = $"{dateText}{text}";
             logList.Add(log);
+        }
+
+        private string FormatInput(bool dateFormat)
+        {
+            var color = ColorUtility.ToHtmlStringRGBA(inputPrefixColor);
+            switch (inputPrefixStyle)
+            {
+                case InputPrefixStyle.Date:
+                    var date = DateTime.Now;
+                    return dateFormat
+                        ? $"[<color=#{color}>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] "
+                        : "           ";
+                case InputPrefixStyle.Dash:
+                    return dateFormat ? $"<color=#{color}>-</color> " : "  ";
+                case InputPrefixStyle.None:
+                    return "";
+                case InputPrefixStyle.Custom:
+                    var whiteSpace = " ";
+                    for (int i = 0; i < customInputPrefix.Length; i++)
+                        whiteSpace += " ";
+                    return dateFormat ? $"<color=#{color}>{customInputPrefix}</color> " : whiteSpace;
+            }
+
+            return "";
         }
 
         [ConsoleCommand]
@@ -151,7 +209,7 @@ namespace HuntroxGames.Utils
         [ConsoleCommand("Help", "", false, MonoObjectExecutionType.FirstInHierarchy)]
         private void HelpCommand()
         {
-            var com = CommandsHandler.GETConsoleCommandDescription();
+            var com = CommandsHandler.GetConsoleCommandDescription();
             foreach (var command in com)
             {
                 string parameters = " ";
@@ -160,8 +218,9 @@ namespace HuntroxGames.Utils
                     foreach (var parameter in command.parametersNames)
                         parameters += parameter + " ";
 
-                var parametersColor = ColorUtility.ToHtmlStringRGBA(new Color(1, 1, 1, 0.25f));
-                var text = $"{command.command}<color=#{parametersColor}>{parameters}</color>: {command.description}";
+                var parametersColor = ColorUtility.ToHtmlStringRGBA(parameterColor);
+                var description = command.description.IsNullOrEmpty() ? "" : $": {command.description}";
+                var text = $"{command.command}<color=#{parametersColor}>{parameters}</color>{description}";
                 InsertLog(text);
             }
         }
@@ -170,9 +229,12 @@ namespace HuntroxGames.Utils
         {
             if (consoleStyle == null)
                 consoleStyle = Resources.Load<GUISkin>("ConsoleStyle");
-
+            
             GUI.skin = consoleStyle;
-            var style = new GUIStyle();
+            
+            GUI.skin.label.normal.textColor = textColor;
+            GUI.skin.textField.contentOffset = new Vector2(-3, 0);
+            
             logBoxRect.width = Screen.width - 10;
             logBoxRect.height = logBoxRect.height;
 
@@ -182,7 +244,7 @@ namespace HuntroxGames.Utils
             var scrollRect = new Rect(logBoxRect);
             viewRect.width -= 20;
             var rectWidth = viewRect.width - 30;
-            viewRect.height = ConsoleCommandHelper.GetLogsHeight(logList,rectWidth,consoleStyle.font);
+            viewRect.height = ConsoleCommandHelper.GetLogsHeight(logList, rectWidth, consoleStyle.font);
             viewRect.y -= 5;
             //viewRect.x += 5;
             scrollRect.y += 25;
@@ -194,8 +256,8 @@ namespace HuntroxGames.Utils
             {
                 var textWidth = ConsoleCommandHelper.GetLogWidth(logList[i], consoleStyle.font);
                 var rectHeight = (textWidth) <= rectWidth ? 20 : 40;
-                
-                Rect labelRect = new Rect(scrollRect.x + 5,labelY , rectWidth, rectHeight);
+
+                Rect labelRect = new Rect(scrollRect.x + 5, labelY, rectWidth, rectHeight);
                 GUI.Label(labelRect, logList[i]);
                 labelY += rectHeight;
             }
@@ -216,14 +278,14 @@ namespace HuntroxGames.Utils
             var color = GUI.color;
             textBoxRect = new Rect(logBoxRect.x + 5, logBoxRect.y + logBoxRect.height + 2,
                 (logBoxRect.width * 0.35f) - 5, 20f);
-            GUI.color = consoleStyle.customStyles[3].normal.textColor;
+            GUI.color = autoCompleteColor;
             if (!commandInput.IsNullOrEmpty())
                 GUI.Label(textBoxRect, commandSuggestion.AutoCompleteSuggestion);
 
-            GUI.color = consoleStyle.textField.normal.textColor;
+            GUI.color = commandInputFieldColor;
             GUI.SetNextControlName("commandInputField");
             commandInput = GUI.TextField(textBoxRect, commandInput);
-            
+
 
             commandSuggestion.SetInput(commandInput);
             GUI.color = color;
@@ -259,15 +321,17 @@ namespace HuntroxGames.Utils
                             commandInput += commandSuggestion.AutoCompleteSuggestion.Trim(' ');
                             TextFieldLineEnd();
                         }
+
                         break;
                 }
             }
         }
+
         private void TextFieldLineEnd()
         {
             GUI.FocusControl("commandInputField");
             TextEditor textEditor =
-                (TextEditor) GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
+                (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
             textEditor?.MoveLineEnd();
         }
 

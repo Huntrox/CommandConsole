@@ -55,7 +55,7 @@ namespace HuntroxGames.Utils
         private List<string> AutoCompleteSuggestions()
         {
             var list = new List<string>();
-            foreach (var command in CommandsHandler.GETConsoleCommandDescription())
+            foreach (var command in CommandsHandler.GetConsoleCommandDescription())
             {
                 if (command.command.StartsWith(commandInput, StringComparison.CurrentCultureIgnoreCase))
                     list.Add(command.command);

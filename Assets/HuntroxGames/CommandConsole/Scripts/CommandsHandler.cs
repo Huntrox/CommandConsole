@@ -20,7 +20,7 @@ namespace HuntroxGames.Utils
 
         private static CommandOptionsCallback optionsCallback;
 
-        internal static List<ConsoleCommandAttribute> GETConsoleCommandDescription()
+        internal static List<ConsoleCommandAttribute> GetConsoleCommandDescription()
         {
             var list = new List<ConsoleCommandAttribute>(FieldCommands.CommandsDescription);
             list.AddRange(MethodCommands.CommandsDescription);
@@ -82,8 +82,10 @@ namespace HuntroxGames.Utils
                 var fieldValue = field.value.memberInfo;
                 if (arguments.IsNullOrEmpty())
                 {
+                    var memberInfo =
+                        ConsoleCommandHelper.GetMemberInfo(field, CommandConsole.Instance.ObjectNameDisplay);
                     var log =
-                        $"{fieldValue.DeclaringType?.Name}.{fieldValue.Name} : <b>{fieldValue.GetValue(field.key)}</b>";
+                        $"{memberInfo} : <b>{fieldValue.GetValue(field.key)}</b>";
                     onGetValueCallback?.Invoke(log, true);
                     return;
                 }
@@ -122,12 +124,15 @@ namespace HuntroxGames.Utils
             {
                 //if no arguments where provided get the value 
                 var propertyValue = property.value.memberInfo;
+                var memberInfo =
+                    ConsoleCommandHelper.GetMemberInfo(property, CommandConsole.Instance.ObjectNameDisplay);
                 if (arguments.IsNullOrEmpty())
                 {
+ 
                     if (propertyValue.CanRead)
                     {
                         var log =
-                            $"{propertyValue.DeclaringType?.Name}.{propertyValue.Name} : <b>{propertyValue.GetValue(property.key)}</b>";
+                            $"{memberInfo} : <b>{propertyValue.GetValue(property.key)}</b>";
                         onGetValueCallback?.Invoke(log, true);
                     }
                     else
@@ -178,9 +183,10 @@ namespace HuntroxGames.Utils
                         SetupOptionsCallback((CommandOptionsCallback) returnValue, onGetValueCallback);
                         return;
                     }
-
+                    var memberInfo =
+                        ConsoleCommandHelper.GetMemberInfo(method, CommandConsole.Instance.ObjectNameDisplay);
                     var log =
-                        $"{methodValue.DeclaringType?.Name}.{methodValue.Name} : <b>{returnValue}</b>";
+                        $"{memberInfo} : <b>{returnValue}</b>";
                     onGetValueCallback?.Invoke(log, true);
                 }
             }
