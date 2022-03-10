@@ -219,7 +219,7 @@ MonoBehaviour:
     m_Normal:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
-      m_TextColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
+      m_TextColor: {r: 1, g: 1, b: 1, a: 1}
     m_Hover:
       m_Background: {fileID: 0}
       m_ScaledBackgrounds: []
@@ -1623,4 +1623,4 @@ MonoBehaviour:
     m_TripleClickSelectsLine: 1
     m_CursorColor: {r: 1, g: 1, b: 1, a: 1}
     m_CursorFlashSpeed: -1
-    m_SelectionColor: {r: 1, g: 0.38403907, b: 0, a: 0.7}
+    m_SelectionColor: {r: 0, g: 1, b: 0.618978, a: 0.7}
