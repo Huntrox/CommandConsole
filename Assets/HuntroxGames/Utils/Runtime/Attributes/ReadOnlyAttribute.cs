@@ -1,4 +1,5 @@
-﻿using System;
+
+using System;
 using UnityEngine;
 
 namespace HuntroxGames.Utils

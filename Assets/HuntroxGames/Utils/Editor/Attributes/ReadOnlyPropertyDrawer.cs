@@ -1,8 +1,7 @@
-﻿using UnityEngine;
+﻿using HuntroxGames.Utils;
+using UnityEngine;
 using UnityEditor;
-using HuntroxGames.Utils;
-namespace HuntroxGames.Utils.EditorUtils
-{
+
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 	public class ReadOnlyPropertyDrawer : PropertyDrawer
 	{
@@ -18,4 +17,3 @@ namespace HuntroxGames.Utils.EditorUtils
 		}
 
 	}
-}

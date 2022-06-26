@@ -1,0 +1,18 @@
+{
+    "name": "HuntroxGames.Utils.editor",
+    "rootNamespace": "HuntroxGames.Utils",
+    "references": [
+        "GUID:989da6a1bbd7725449a75c8a22c16f27"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
