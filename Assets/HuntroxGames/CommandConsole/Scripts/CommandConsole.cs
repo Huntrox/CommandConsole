@@ -1,7 +1,6 @@
 #define COMMANDS_CONSOLE
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -75,14 +74,15 @@ namespace HuntroxGames.Utils
         private readonly ConsoleHistory consoleHistory = new ConsoleHistory();
         private readonly CommandSuggestion commandSuggestion = new CommandSuggestion();
 
-        public delegate void OnConsole(bool value);
 
         /// <summary>
         /// this event will rise everytime when the console opens or close
         /// Usage Example: add listener and use it to pause/unpause the game
         /// </summary>
-        public event OnConsole onConsole;
-
+        public static event Action<bool> OnConsole;
+        public static event Action<string> OnCommandExecuted;
+        public static event Action<string,string[]> OnCommandExecutedWithParameters;
+        
         protected override void Awake()
         {
             base.Awake();
@@ -158,7 +158,7 @@ namespace HuntroxGames.Utils
             else
                 GUI.UnfocusWindow();
 
-            onConsole?.Invoke(isActive);
+            OnConsole?.Invoke(isActive);
         }
 
 
@@ -367,8 +367,10 @@ namespace HuntroxGames.Utils
             consoleHistory.Add(commandInput);
             if (fetchMode.HasFlag(FetchMode.BeforeExecutingAnyCommand))
                 CommandsHandler.FetchCommandAttributes();
-            var command = ConsoleCommandHelper.SplitCommand(commandInput);
-            CommandsHandler.ExecuteCommand(command.cmd, command.param, InsertLog);
+            var (cmd, @params) = ConsoleCommandHelper.SplitCommand(commandInput);
+            CommandsHandler.ExecuteCommand(cmd, @params, InsertLog);
+            OnCommandExecuted?.Invoke(cmd);
+            OnCommandExecutedWithParameters?.Invoke(cmd,  @params);
             commandInput = "";
             updateScrollView = true;
         }
