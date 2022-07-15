@@ -80,7 +80,13 @@ namespace HuntroxGames.Utils
         /// Usage Example: add listener and use it to pause/unpause the game
         /// </summary>
         public static event Action<bool> OnConsole;
+        /// <summary>
+        /// this event will rise everytime when the command is executed with command name
+        /// </summary>
         public static event Action<string> OnCommandExecuted;
+        /// <summary>
+        /// this event will rise everytime when the command is executed with command name and parameters
+        /// </summary>
         public static event Action<string,string[]> OnCommandExecutedWithParameters;
         
         protected override void Awake()

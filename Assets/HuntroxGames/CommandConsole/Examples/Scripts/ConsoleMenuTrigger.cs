@@ -6,18 +6,27 @@ namespace HuntroxGames.Utils
 {
     public class ConsoleMenuTrigger : MonoBehaviour
     {
-
+        
+#if ENABLE_INPUT_SYSTEM
+        [SerializeField] private InputAction consoleAction =
+            new InputAction("<Keyboard>/backquote", InputActionType.Button, "<Keyboard>/backquote");
+#endif
+        
+#if ENABLE_LEGACY_INPUT_MANAGER
+        [SerializeField] private KeyCode consoleKey = KeyCode.BackQuote;
+#endif
         void Update()
         {
 #if ENABLE_INPUT_SYSTEM
-            if (Keyboard.current.backquoteKey.wasPressedThisFrame)
+            
+            if (consoleAction.triggered)
             {
                 CommandConsole.Instance.Console();
                 return;
             }
-#endif
-#if ENABLE_LEGACY_INPUT_MANAGER
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            if (Input.GetKeyDown(consoleKey))
                 CommandConsole.Instance.Console();
 #endif
         }
