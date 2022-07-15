@@ -174,21 +174,22 @@ namespace HuntroxGames.Utils
             void Execute(ExecutableCommand<MethodInfo> method)
             {
                 var methodValue = method.value.memberInfo;
-                object[] param = ConsoleCommandHelper.ToMethodParams(methodValue, arguments);
+                var param = ConsoleCommandHelper.ToMethodParams(methodValue, arguments);
                 var returnValue = method.value.memberInfo.Invoke(method.key, param);
-                if (methodValue.ReturnType != typeof(void))
+
+                if (methodValue.ReturnType == typeof(void)) return;
+                
+                if (returnValue is CommandOptionsCallback callback)
                 {
-                    if (methodValue == typeof(CommandOptionsCallback))
-                    {
-                        SetupOptionsCallback((CommandOptionsCallback) returnValue, onGetValueCallback);
-                        return;
-                    }
-                    var memberInfo =
-                        ConsoleCommandHelper.GetMemberInfo(method, CommandConsole.Instance.ObjectNameDisplay);
-                    var log =
-                        $"{memberInfo} : <b>{returnValue}</b>";
-                    onGetValueCallback?.Invoke(log, true);
+                    SetupOptionsCallback(callback, onGetValueCallback);
+                    return;
                 }
+
+                var memberInfo =
+                    ConsoleCommandHelper.GetMemberInfo(method, CommandConsole.Instance.ObjectNameDisplay);
+                var log =
+                    $"{memberInfo} : <b>{returnValue}</b>";
+                onGetValueCallback?.Invoke(log, true);
             }
 
             //Execute all static members
