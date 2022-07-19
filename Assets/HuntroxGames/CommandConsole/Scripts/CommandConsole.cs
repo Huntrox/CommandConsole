@@ -56,6 +56,19 @@ namespace HuntroxGames.Utils
 
         public ObjectNameDisplayType ObjectNameDisplay => objectNameDisplay;
 
+        /// <summary>
+        /// this event will rise everytime when the console opens or close
+        /// Usage Example: add listener and use it to pause/unpause the game
+        /// </summary>
+        public static event Action<bool> OnConsole;
+        /// <summary>
+        /// this event will rise everytime when the command is executed with command name
+        /// </summary>
+        public static event Action<string> OnCommandExecuted;
+        /// <summary>
+        /// this event will rise everytime when the command is executed with command name and parameters
+        /// </summary>
+        public static event Action<string,string[]> OnCommandExecutedWithParameters;
 #if COMMANDS_CONSOLE
 
         private Vector2 scroll;
@@ -75,19 +88,6 @@ namespace HuntroxGames.Utils
         private readonly CommandSuggestion commandSuggestion = new CommandSuggestion();
 
 
-        /// <summary>
-        /// this event will rise everytime when the console opens or close
-        /// Usage Example: add listener and use it to pause/unpause the game
-        /// </summary>
-        public static event Action<bool> OnConsole;
-        /// <summary>
-        /// this event will rise everytime when the command is executed with command name
-        /// </summary>
-        public static event Action<string> OnCommandExecuted;
-        /// <summary>
-        /// this event will rise everytime when the command is executed with command name and parameters
-        /// </summary>
-        public static event Action<string,string[]> OnCommandExecutedWithParameters;
         
         protected override void Awake()
         {
@@ -218,7 +218,7 @@ namespace HuntroxGames.Utils
             var com = CommandsHandler.GetConsoleCommandDescription();
             foreach (var command in com)
             {
-                string parameters = " ";
+                var parameters = " ";
 
                 if (!command.parametersNames.IsNullOrEmpty())
                     foreach (var parameter in command.parametersNames)
