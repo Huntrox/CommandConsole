@@ -15,7 +15,7 @@ namespace HuntroxGames.Utils
 #if ENABLE_LEGACY_INPUT_MANAGER
         [SerializeField] private KeyCode consoleKey = KeyCode.BackQuote;
 #endif
-        void Update()
+        public void Update()
         {
 #if ENABLE_INPUT_SYSTEM
             
