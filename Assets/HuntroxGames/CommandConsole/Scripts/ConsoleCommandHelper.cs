@@ -147,24 +147,19 @@ namespace HuntroxGames.Utils
         } 
         internal static object ToVector(string value)
         {
-            var matches = Regex.Matches(value, ConsoleCommandHelper.COMMA_SEPARATOR).Cast<Match>();
-            if (Regex.IsMatch(value, VECTOR_INT_PATTERN))
-                return ParseVectorInt(matches);
-            else
-                return ParseVector(matches);
+            var matches = Regex.Matches(value, COMMA_SEPARATOR).Cast<Match>();
+            return Regex.IsMatch(value, VECTOR_INT_PATTERN) ? ParseVectorInt(matches) : ParseVector(matches);
         }
         private static object ParseVector(IEnumerable<Match> matches)
         {
             var coordinates = matches.Where( m =>float.TryParse(m.Value ,out var f))
                 .Select(m=> float.Parse(m.Value)).ToArray();
-            switch (coordinates.Length)
+            return coordinates.Length switch
             {
-                case 3:
-                    return new Vector3(coordinates[0],coordinates[1],coordinates[2]);
-                case 2:
-                    return new Vector3(coordinates[0],coordinates[1],0);
-            }
-            return null;
+                3 => new Vector3(coordinates[0], coordinates[1], coordinates[2]),
+                2 => new Vector3(coordinates[0], coordinates[1], 0),
+                _ => null
+            };
         }
         private static object ParseVectorInt(IEnumerable<Match> matches)
         {
