@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -6,19 +7,24 @@ namespace HuntroxGames.Utils
 {
     public class ConsoleMenuTrigger : MonoBehaviour
     {
+#if ENABLE_LEGACY_INPUT_MANAGER
+        [SerializeField] private KeyCode consoleKey = KeyCode.BackQuote;
+#endif 
+        
         
 #if ENABLE_INPUT_SYSTEM
         [SerializeField] private InputAction consoleAction =
             new InputAction("<Keyboard>/backquote", InputActionType.Button, "<Keyboard>/backquote");
+
+        private void Start()=> consoleAction.Enable();
+        
 #endif
         
-#if ENABLE_LEGACY_INPUT_MANAGER
-        [SerializeField] private KeyCode consoleKey = KeyCode.BackQuote;
-#endif
+        
         public void Update()
         {
 #if ENABLE_INPUT_SYSTEM
-            
+
             if (consoleAction.triggered)
             {
                 CommandConsole.Instance.Console();
