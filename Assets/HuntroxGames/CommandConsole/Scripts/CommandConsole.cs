@@ -1,12 +1,14 @@
 #define COMMANDS_CONSOLE
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
 namespace HuntroxGames.Utils
 {
+    [PublicAPI]
     public class CommandConsole : Singleton<CommandConsole>
     {
         [Flags]
@@ -336,7 +338,7 @@ namespace HuntroxGames.Utils
         private void TextFieldLineEnd()
         {
             GUI.FocusControl("commandInputField");
-            TextEditor textEditor =
+            var textEditor =
                 (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
             textEditor?.MoveLineEnd();
         }
