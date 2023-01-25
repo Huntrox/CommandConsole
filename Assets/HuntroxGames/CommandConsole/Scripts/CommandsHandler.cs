@@ -62,7 +62,7 @@ namespace HuntroxGames.Utils
             if (optionsCallback != null)
             {
                 if (!optionsCallback.TryExecuteOption(command))
-                    onGetValueCallback?.Invoke("invalid option, please try again!",false);
+                    onGetValueCallback?.Invoke(optionsCallback.onInvalidOption,false);
                 optionsCallback = null;
                 return;
             }
@@ -213,7 +213,7 @@ namespace HuntroxGames.Utils
             Action<string, bool> onGetValueCallback)
         {
             optionsCallback = optnsCallback;
-            var optionsLog = $"Options: ";
+            var optionsLog = "Options: ";
             var index = 0;
             foreach (var option in optionsCallback.options)
             {

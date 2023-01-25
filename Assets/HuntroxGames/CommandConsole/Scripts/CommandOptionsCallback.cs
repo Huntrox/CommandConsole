@@ -9,7 +9,7 @@ namespace HuntroxGames.Utils
     public class CommandOptionsCallback
     {
         public Dictionary<string,CommandOption> options;
-        
+        public string onInvalidOption = "Invalid Option, Please try again";
         public CommandOptionsCallback(params CommandOption[] options)
         {
             this.options = options.ToDictionary(x => x.optionName.ToUpper());
