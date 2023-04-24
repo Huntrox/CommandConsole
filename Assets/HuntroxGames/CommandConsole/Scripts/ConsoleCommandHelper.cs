@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace HuntroxGames.Utils
 {
+    [PublicAPI]
     internal static class ConsoleCommandHelper
     {
         
@@ -22,6 +24,11 @@ namespace HuntroxGames.Utils
             {typeof(Vector2),x=>(Vector2)ToVector(x)},
             {typeof(Color),ToColor},
         };
+        /// <summary>
+        /// Split command and parameters from input string and return them as tuple (command,parameters) 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         internal static (string cmd ,string[] param) SplitCommand(string input)
         {
             var s = input.Split(' ');
@@ -105,9 +112,10 @@ namespace HuntroxGames.Utils
                         return floatValue;
                     return null;
             }
-            if (TypesDictionary.TryGetValue(type, out var funcValue))
-                return funcValue.Invoke(value);
-            return null;
+            
+            return TypesDictionary.TryGetValue(type, out var funcValue) 
+                ? funcValue.Invoke(value) 
+                : null;
         }
 
         private static object ToEnum(string value, Type type)
