@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace HuntroxGames.Utils
 {
@@ -10,7 +8,15 @@ namespace HuntroxGames.Utils
         private string commandInput = "";
         private int index = 0;
 
+        /// <summary>
+        /// Returns the current completed auto complete suggestion
+        /// </summary>
         public string AutoCompleteSuggestion => AutoComplete();
+        
+        /// <summary>
+        /// Returns the current auto complete suggestions matching the input
+        /// </summary>
+        public List<string> Suggestions => AutoCompleteSuggestions();
 
         public void SetInput(string input)
         {
@@ -30,16 +36,16 @@ namespace HuntroxGames.Utils
         public void Previous()
             => index = index - 1 < 0 ? AutoCompleteSuggestions().Count - 1 : index - 1;
 
-        public string AutoComplete()
+        private string AutoComplete()
         {
             if (AutoCompleteSuggestions().IsNullOrEmpty())
                 return "";
-            string autoComplete = AutoCompleteSuggestions()[index];
+            var autoComplete = AutoCompleteSuggestions()[index];
             var removedChar = "";
-            for (int i = 0; i < commandInput.Length; i++)
+            for (var i = 0; i < commandInput.Length; i++)
             {
-                char atChar = autoComplete[i];
-                char chr = commandInput[i];
+                var atChar = autoComplete[i];
+                var chr = commandInput[i];
                 if (char.ToUpperInvariant(atChar) == char.ToUpperInvariant(chr))
                     removedChar += atChar;
             }

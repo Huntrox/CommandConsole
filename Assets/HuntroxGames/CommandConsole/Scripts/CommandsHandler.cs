@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace HuntroxGames.Utils
 {
+    [PublicAPI]
     public static class CommandsHandler
     {
         private static readonly CommandInfo<FieldInfo> FieldCommands = new CommandInfo<FieldInfo>();
@@ -20,6 +22,12 @@ namespace HuntroxGames.Utils
 
         private static CommandOptionsCallback optionsCallback;
 
+        
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private static void OnInitialize() 
+            => GetStaticClass();
+
+        
         internal static List<ConsoleCommandAttribute> GetConsoleCommandDescription()
         {
             var list = new List<ConsoleCommandAttribute>(FieldCommands.CommandsDescription);
@@ -28,11 +36,11 @@ namespace HuntroxGames.Utils
             return list;
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        private static void OnInitialize()
-        {
-            GetStaticClass();
-        }
+        /// <summary>
+        /// Fetches all the commands from the static classes and the MonoBehaviours in the scene.
+        /// This can be called manually if you want to update the commands in the console.
+        /// This is Expensive use it with caution.
+        /// </summary>
         public static void FetchCommandAttributes()
         {
             var behaviours = Object.FindObjectsOfType<MonoBehaviour>()
@@ -49,32 +57,34 @@ namespace HuntroxGames.Utils
             rebuildRequired = false;
         }
         
-        private static void Clear()
-        {
-            FieldCommands.Clear();
-            PropertyCommands.Clear();
-            MethodCommands.Clear();
-        }
-
+        /// <summary>
+        /// Executes the command with the given arguments if the command is found.
+        /// </summary>
+        /// <param name="command">The command to execute</param>
+        /// <param name="commandArguments">The arguments to pass to the command</param>
+        /// <param name="executeLogCallback">Command Execution Log Callback</param>
         public static void ExecuteCommand(string command, object[] commandArguments,
-            Action<string, bool> onGetValueCallback)
+            Action<string, bool> executeLogCallback)
         {
             if (optionsCallback != null)
             {
                 if (!optionsCallback.TryExecuteOption(command))
-                    onGetValueCallback?.Invoke(optionsCallback.onInvalidOption,false);
+                    executeLogCallback?.Invoke(optionsCallback.onInvalidOption,false);
                 optionsCallback = null;
                 return;
             }
-            ExecuteFieldsCommands(command, commandArguments,onGetValueCallback);
-            ExecutePropertiesCommands(command, commandArguments, onGetValueCallback);
-            InvokeMethodsCommands(command, commandArguments, onGetValueCallback);
+            ExecuteFieldsCommands(command, commandArguments,executeLogCallback);
+            ExecutePropertiesCommands(command, commandArguments, executeLogCallback);
+            InvokeMethodsCommands(command, commandArguments, executeLogCallback);
+            
+            //check if rebuild is required to fetch the commands from the scene.
+            //this is used when a MonoBehaviour with commands is removed from the scene.
             if(rebuildRequired)
                 FetchCommandAttributes();
         }
 
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
-            Action<string, bool> onGetValueCallback)
+            Action<string, bool> executeLogCallback)
         {
 
             void Execute(ExecutableCommand<FieldInfo> field)
@@ -86,7 +96,7 @@ namespace HuntroxGames.Utils
                         ConsoleCommandHelper.GetMemberInfo(field, CommandConsole.Instance.ObjectNameDisplay);
                     var log =
                         $"{memberInfo} : <b>{fieldValue.GetValue(field.key)}</b>";
-                    onGetValueCallback?.Invoke(log, true);
+                    executeLogCallback?.Invoke(log, true);
                     return;
                 }
 
@@ -98,7 +108,7 @@ namespace HuntroxGames.Utils
                 else
                 {
                     var log = $"Cannot set a constant field {fieldValue.Name}";
-                    onGetValueCallback?.Invoke(log, true);
+                    executeLogCallback?.Invoke(log, true);
                 }
             }
 
@@ -114,11 +124,11 @@ namespace HuntroxGames.Utils
                     options.Add(new CommandOption(field.key.name, () => Execute(field)));
             }
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
         }
 
         private static void ExecutePropertiesCommands(string propertyName, object[] arguments,
-            Action<string, bool> onGetValueCallback)
+            Action<string, bool> executeLogCallback)
         {
             void Execute(ExecutableCommand<PropertyInfo> property)
             {
@@ -133,7 +143,7 @@ namespace HuntroxGames.Utils
                     {
                         var log =
                             $"{memberInfo} : <b>{propertyValue.GetValue(property.key)}</b>";
-                        onGetValueCallback?.Invoke(log, true);
+                        executeLogCallback?.Invoke(log, true);
                     }
                     else
                         Debug.LogWarning(
@@ -164,12 +174,12 @@ namespace HuntroxGames.Utils
                     options.Add(new CommandOption(property.key.name, () => Execute(property)));
             }
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
             
         }
 
         private static void InvokeMethodsCommands(string methodName, object[] arguments,
-            Action<string, bool> onGetValueCallback)
+            Action<string, bool> executeLogCallback)
         {
             void Execute(ExecutableCommand<MethodInfo> method)
             {
@@ -181,7 +191,7 @@ namespace HuntroxGames.Utils
                 
                 if (returnValue is CommandOptionsCallback callback)
                 {
-                    SetupOptionsCallback(callback, onGetValueCallback);
+                    SetupOptionsCallback(callback, executeLogCallback);
                     return;
                 }
 
@@ -189,7 +199,7 @@ namespace HuntroxGames.Utils
                     ConsoleCommandHelper.GetMemberInfo(method, CommandConsole.Instance.ObjectNameDisplay);
                 var log =
                     $"{memberInfo} : <b>{returnValue}</b>";
-                onGetValueCallback?.Invoke(log, true);
+                executeLogCallback?.Invoke(log, true);
             }
 
             //Execute all static members
@@ -206,11 +216,11 @@ namespace HuntroxGames.Utils
             }
 
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), onGetValueCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
         }
 
         private static void SetupOptionsCallback(CommandOptionsCallback optnsCallback,
-            Action<string, bool> onGetValueCallback)
+            Action<string, bool> executeLogCallback)
         {
             optionsCallback = optnsCallback;
             var optionsLog = "Options: ";
@@ -220,7 +230,7 @@ namespace HuntroxGames.Utils
                 optionsLog += $"{option.Value.optionName}[{index}] ";
                 index++;
             }
-            onGetValueCallback?.Invoke(optionsLog, false);
+            executeLogCallback?.Invoke(optionsLog, false);
         }
 
         private static void GetFields(Object behaviour)
@@ -302,8 +312,8 @@ namespace HuntroxGames.Utils
 
         private static ConsoleCommandAttribute[] GetAttribute(MemberInfo member)
         {
-            object[] attrs = member.GetCustomAttributes(true);
-            List<ConsoleCommandAttribute> attributes = new List<ConsoleCommandAttribute>();
+            var attrs = member.GetCustomAttributes(true);
+            var attributes = new List<ConsoleCommandAttribute>();
             foreach (var attr in attrs)
             {
                 if (attr is ConsoleCommandAttribute devCom)
@@ -311,22 +321,20 @@ namespace HuntroxGames.Utils
                     devCom.command = (devCom.command.IsNullOrEmpty() ? member.Name : devCom.command)
                         .Replace(" ", string.Empty);
                     if (member is MethodInfo method)
-                        devCom.parametersNames = GetMethodParametersName(method.GetParameters());
+                        devCom.parametersNames = ConsoleCommandHelper.GetMethodParametersName(method.GetParameters());
                     attributes.Add(devCom);
                 }
             }
 
             return attributes.ToArray();
         }
-
-        private static string[] GetMethodParametersName(ParameterInfo[] getParameters)
+        
+        
+        private static void Clear()
         {
-            if (getParameters.IsNullOrEmpty())
-                return null;
-            var names = new string[getParameters.Length];
-            for (int i = 0; i < getParameters.Length; i++)
-                names[i] = getParameters[i].Name;
-            return names;
+            FieldCommands.Clear();
+            PropertyCommands.Clear();
+            MethodCommands.Clear();
         }
     }
 }

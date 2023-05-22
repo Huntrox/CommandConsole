@@ -15,6 +15,9 @@ namespace HuntroxGames.Utils
         private readonly Dictionary<string, ConsoleCommandAttribute> attributes =
             new Dictionary<string, ConsoleCommandAttribute>();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public List<ConsoleCommandAttribute> CommandsDescription =>
             attributes.Where(a => a.Value.helpMenu)
                 .Select(a => a.Value).ToList();

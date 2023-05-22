@@ -16,6 +16,7 @@ namespace HuntroxGames.Utils
         internal const string COMMA_SEPARATOR =@"[\-]?\d*\.?\d+?";
         internal const string VECTOR_INT_PATTERN =@"([\-]?\d*\.?\d+?:int)$";
         internal const string DATE_PREFIX =@"\[<color=yellow>\d+\:\d+\:\d+</*color>\] ";
+        internal const string VECTOR_PATTERN =@"([\-]?\d*\.?\d+?:float)$";
         private static readonly Dictionary<Type, Func<string,object>> TypesDictionary= new Dictionary<Type, Func<string,object>>
         {
             {typeof(Vector3),ToVector},
@@ -117,7 +118,15 @@ namespace HuntroxGames.Utils
                 ? funcValue.Invoke(value) 
                 : null;
         }
-
+        internal static string[] GetMethodParametersName(ParameterInfo[] getParameters)
+        {
+            if (getParameters.IsNullOrEmpty())
+                return null;
+            var names = new string[getParameters.Length];
+            for (var i = 0; i < getParameters.Length; i++)
+                names[i] = getParameters[i].Name;
+            return names;
+        }
         private static object ToEnum(string value, Type type)
         {
             try
