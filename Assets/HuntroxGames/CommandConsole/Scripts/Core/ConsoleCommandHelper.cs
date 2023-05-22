@@ -182,14 +182,12 @@ namespace HuntroxGames.Utils
         {
             var coordinates = matches.Where( m =>int.TryParse(m.Value ,out var i))
                 .Select(m=> int.Parse(m.Value)).ToArray();
-            switch (coordinates.Length)
+            return coordinates.Length switch
             {
-                case 3:
-                    return new Vector3Int(coordinates[0],coordinates[1],coordinates[2]);
-                case 2:
-                    return new Vector3Int(coordinates[0],coordinates[1],0);
-            }
-            return null;
+                3 => new Vector3Int(coordinates[0], coordinates[1], coordinates[2]),
+                2 => new Vector3Int(coordinates[0], coordinates[1], 0),
+                _ => null
+            };
         }
         
         public static int GetLogsHeight(List<string> logs,float rectWidth,Font font)
