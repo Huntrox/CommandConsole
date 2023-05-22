@@ -27,7 +27,7 @@ namespace HuntroxGames.Utils
 
             if (consoleAction.triggered)
             {
-                CommandConsole.Instance.Console();
+                CommandConsole.Instance.ToggleConsole();
                 return;
             }
 
