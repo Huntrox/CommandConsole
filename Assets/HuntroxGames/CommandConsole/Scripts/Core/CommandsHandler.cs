@@ -15,6 +15,10 @@ namespace HuntroxGames.Utils
         private static readonly CommandInfo<MethodInfo> MethodCommands = new CommandInfo<MethodInfo>();
         private static readonly CommandInfo<PropertyInfo> PropertyCommands = new CommandInfo<PropertyInfo>();
 
+        /// <summary>
+        /// Setting this to true will force the console to rebuild and re-fetch all the commands in next command execution.
+        /// Manual Command fetching done by calling <see cref="FetchCommandAttributes"/> method will set this to false.
+        /// </summary>
         public static bool rebuildRequired;
         
         private static BindingFlags bindingFlags =
@@ -24,7 +28,7 @@ namespace HuntroxGames.Utils
 
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        private static void OnInitialize() 
+        public static void OnInitialize() 
             => GetStaticClass();
 
         
