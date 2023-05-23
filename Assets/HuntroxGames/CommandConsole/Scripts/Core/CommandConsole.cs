@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace HuntroxGames.Utils
 {
     [PublicAPI]
-    public class CommandConsole : Singleton<CommandConsole>
+    public abstract class CommandConsole : Singleton<CommandConsole>
     {
         [Flags]
         private enum FetchMode
@@ -43,6 +43,17 @@ namespace HuntroxGames.Utils
 
         [SerializeField] private FetchMode fetchMode = FetchMode.OnSceneLoad;
         [SerializeField] private ObjectNameDisplayType objectNameDisplay = ObjectNameDisplayType.GameObject | ObjectNameDisplayType.Member;
+        
+        [Header("Style")] 
+        [SerializeField] protected Color commandInputFieldColor = new Color32(65, 183, 25, 255);
+        [SerializeField] protected Color textColor = Color.white;
+        [SerializeField] protected Color parameterColor = new Color(1, 1, 1, 0.25f);
+        [SerializeField] protected Color autoCompleteColor = new Color(1, 1, 1, 0.25f);
+        [Header("Input Style")] 
+        [SerializeField] protected InputPrefixStyle inputPrefixStyle = InputPrefixStyle.Date;
+        [SerializeField] protected Color inputPrefixColor = Color.yellow;
+        [SerializeField] protected string customInputPrefix = "";
+        
         public ObjectNameDisplayType ObjectNameDisplay => objectNameDisplay;
 
 
@@ -62,7 +73,7 @@ namespace HuntroxGames.Utils
 #if COMMANDS_CONSOLE
         
         protected bool isActive;
-        
+        protected readonly List<string> logList = new List<string>();
         protected readonly ConsoleHistory consoleHistory = new ConsoleHistory();
         protected readonly CommandSuggestion commandSuggestion = new CommandSuggestion();
 

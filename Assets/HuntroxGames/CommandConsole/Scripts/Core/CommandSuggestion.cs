@@ -36,24 +36,30 @@ namespace HuntroxGames.Utils
         public void Previous()
             => index = index - 1 < 0 ? AutoCompleteSuggestions().Count - 1 : index - 1;
 
-        private string AutoComplete()
+        public string AutoComplete(bool removeInput = true)
         {
             if (AutoCompleteSuggestions().IsNullOrEmpty())
                 return "";
             var autoComplete = AutoCompleteSuggestions()[index];
             var removedChar = "";
+            var replaceChar = "";
             for (var i = 0; i < commandInput.Length; i++)
             {
                 var atChar = autoComplete[i];
                 var chr = commandInput[i];
+
                 if (char.ToUpperInvariant(atChar) == char.ToUpperInvariant(chr))
+                {
                     removedChar += atChar;
+                    replaceChar += chr;
+                }
             }
 
             if (!removedChar.IsNullOrEmpty())
-                autoComplete = autoComplete.Replace(removedChar, "");
-            foreach (var chr in commandInput)
-                autoComplete = autoComplete.Insert(0, " ");
+                autoComplete = autoComplete.Replace(removedChar, removeInput? "" : commandInput);
+            if (removeInput)
+                foreach (var chr in commandInput)
+                    autoComplete = autoComplete.Insert(0, " ");
 
             return autoComplete;
         }

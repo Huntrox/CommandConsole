@@ -1,6 +1,5 @@
 #define COMMANDS_CONSOLE
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HuntroxGames.Utils
@@ -8,17 +7,10 @@ namespace HuntroxGames.Utils
     public class ConsoleGUIMenu : CommandConsole
     {
 
-        [Header("Style")] [SerializeField] private Font font;
-        [SerializeField] private Color commandInputFieldColor = new Color32(65, 183, 25, 255);
-        [SerializeField] private Color textColor = Color.white;
-        [SerializeField] private Color parameterColor = new Color(1, 1, 1, 0.25f);
-        [SerializeField] private Color autoCompleteColor = new Color(1, 1, 1, 0.25f);
+        [Header("GUI Style")] [SerializeField] 
+        private Font font;
 
-        [Header("Input Style")] [SerializeField]
-        private InputPrefixStyle inputPrefixStyle = InputPrefixStyle.Date;
-
-        [SerializeField] private Color inputPrefixColor = Color.yellow;
-        [SerializeField] private string customInputPrefix = "";
+        
         [Header("Input")]
         [SerializeField] private KeyCode autoCompletionKey = KeyCode.Tab;
         [SerializeField] private KeyCode submitKey = KeyCode.Return;
@@ -27,7 +19,7 @@ namespace HuntroxGames.Utils
         
 
         private Vector2 scroll;
-        private readonly List<string> logList = new List<string>();
+
         private string commandInput = "";
         private GUISkin consoleStyle;
 
@@ -283,17 +275,17 @@ namespace HuntroxGames.Utils
             switch (navigation)
             {
                 case ConsoleNavigation.Up:
-                    if (commandInput.IsNullOrEmpty())
-                        commandInput = consoleHistory.Previous();
-                    else
-                        commandSuggestion.Previous();
+                    //if (commandInput.IsNullOrEmpty() || commandInput != commandSuggestion.AutoCompleteSuggestion)
+                        commandInput = consoleHistory.Previous(commandInput);
+                    // else
+                    //     commandSuggestion.Previous();
                     TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Down:
-                    if (commandInput.IsNullOrEmpty())
-                        commandInput = consoleHistory.Next();
-                    else
-                        commandSuggestion.Next();
+                    //if (commandInput.IsNullOrEmpty() || commandInput != commandSuggestion.AutoCompleteSuggestion)
+                        commandInput = consoleHistory.Next(commandInput);
+                    // else
+                    //     commandSuggestion.Next();
                     TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Left:
