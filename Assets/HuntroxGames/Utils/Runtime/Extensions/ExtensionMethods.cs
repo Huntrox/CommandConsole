@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 namespace HuntroxGames.Utils
@@ -7,6 +9,7 @@ namespace HuntroxGames.Utils
     public static class ExtensionMethods
     {
         #region FloatExtension
+
         public static float Snap(this float value, float snappingValue)
         {
             if (snappingValue == 0) return value;
@@ -45,11 +48,11 @@ namespace HuntroxGames.Utils
             float newRangeMin, float newRangeMax) =>
             (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
 
-        
+
 
         #endregion
 
-        public static bool MaskContains(this LayerMask mask, int layerNumber) 
+        public static bool MaskContains(this LayerMask mask, int layerNumber)
             => mask == (mask | (1 << layerNumber));
 
         public static int WithRandomSign(this int value, float negativeProbability = 0.5f)
@@ -73,46 +76,96 @@ namespace HuntroxGames.Utils
             color.a = alpha;
             spriteRenderer.color = color;
         }
+
         public static void SetAlpha(this UnityEngine.UI.Graphic graphic, float alpha)
         {
             var color = graphic.color;
             color.a = alpha;
             graphic.color = color;
         }
-        public static Color SetAlpha(this Color color,float alpha)
-            => new Color(color.r,color.g,color.b,alpha);
-      
-        
-        
-        public static bool IsTouching(this Collider2D collider, Collider2D other) 
+
+        public static Color SetAlpha(this Color color, float alpha)
+            => new Color(color.r, color.g, color.b, alpha);
+
+
+
+        public static bool IsTouching(this Collider2D collider, Collider2D other)
             => collider.IsTouching(other.bounds);
-        public static bool IsTouching(this Collider2D collider, Bounds other) 
+
+        public static bool IsTouching(this Collider2D collider, Bounds other)
             => collider.bounds.Intersects(other);
 
         #region Transform
-        public static bool IsFacingTarget(this Transform transform,Transform target,float dotThreshold = 0.5f) {
+
+        public static bool IsFacingTarget(this Transform transform, Transform target, float dotThreshold = 0.5f)
+        {
             var vectorToTarget = target.position - transform.position;
             vectorToTarget.Normalize();
-            var dot = Vector3.Dot(transform.forward,vectorToTarget);
+            var dot = Vector3.Dot(transform.forward, vectorToTarget);
             return dot >= dotThreshold;
         }
+
         public static bool IsNull(this Component component) => (component == null);
+
         public static void LocalReset(this Transform transform)
         {
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
             transform.localScale = Vector3.one;
         }
+
         public static void Reset(this Transform transform)
         {
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
             transform.localScale = Vector3.one;
         }
+
         public static void DestroyAllChildren(this Transform transform)
         {
             foreach (Transform child in transform) UnityEngine.Object.Destroy(child.gameObject);
         }
+
+        #endregion
+
+        #region Events
+
+        public static void AddListener(this EventTrigger eventTrigger, EventTriggerType triggerType,
+            UnityAction<BaseEventData> call)
+        {
+            if (eventTrigger == null)
+                throw new ArgumentNullException(nameof(eventTrigger));
+            if (call == null)
+                throw new ArgumentNullException(nameof(call));
+            var entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            if (entry == null)
+            {
+                entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+                eventTrigger.triggers.Add(entry);
+            }
+
+            entry.callback.AddListener(call);
+        }
+
+        public static void RemoveListener(this EventTrigger eventTrigger, EventTriggerType triggerType,
+            UnityAction<BaseEventData> call)
+        {
+            if (eventTrigger == null)
+                throw new ArgumentNullException(nameof(eventTrigger));
+            if (call == null)
+                throw new ArgumentNullException(nameof(call));
+            var entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            entry?.callback.RemoveListener(call);
+        }
+
+        public static void RemoveAllListeners(this EventTrigger eventTrigger, EventTriggerType triggerType)
+        {
+            if (eventTrigger == null)
+                throw new ArgumentNullException(nameof(eventTrigger));
+            var entry = eventTrigger.triggers.Find(e => e.eventID == triggerType);
+            entry?.callback.RemoveAllListeners();
+        }
+
         #endregion
     }
 }

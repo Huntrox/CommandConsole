@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HuntroxGames.Utils
@@ -64,9 +65,41 @@ namespace HuntroxGames.Utils
                 var textGo = Instantiate(suggestionTextPrefab, suggestionContent).GetComponentInChildren<TextMeshProUGUI>();
                 textGo.text = suggestion;
                 textGo.color = index == commandSuggestion.CurrentIndex ? selectedSuggestionTextColor : suggestionTextColor;
+                var eventTrigger = textGo.transform.parent.GetComponent<EventTrigger>();
+                eventTrigger.AddListener(EventTriggerType.Select, OnSuggestionSelect);
                 index++;
             }
             suggestionParent.gameObject.SetActive(suggestions.Count > 1 && !commandInput.IsNullOrEmpty());
+        }
+
+        private void OnSuggestionSelect(BaseEventData eventData)
+        {
+            var rect = eventData.selectedObject.GetComponent<RectTransform>();
+            ScrollToSuggestion(rect);
+        }
+
+        private void ScrollToSuggestion(RectTransform target)
+        {
+            //heck if the selected suggestion in content is visible in the view if not scroll to it
+            // var objPosition = (Vector2)suggestionView.transform.InverseTransformPoint(target.position);
+            // var scrollHeight = suggestionView.GetComponent<RectTransform>().rect.height;
+            // var objHeight = target.rect.height;
+            //
+            // if (objPosition.y > scrollHeight / 2)
+            // {
+            //     suggestionContent.localPosition = new Vector2(0,
+            //         suggestionContent.localPosition.y - objHeight - objHeight/2);
+            // }
+            //
+            // if (objPosition.y < -scrollHeight / 2)
+            // {
+            //     suggestionContent.localPosition = new Vector2(0,
+            //         suggestionContent.localPosition.y + objHeight  + objHeight/2);
+            // }
+            var anchoredPosition = 
+                (Vector2)suggestionView.transform.InverseTransformPoint(suggestionContent.position)
+                - (Vector2)suggestionView.transform.InverseTransformPoint(target.position);
+            suggestionContent.anchoredPosition = new Vector2(0, anchoredPosition.y);
         }
 
         private void UpdateSuggestions()
@@ -77,12 +110,15 @@ namespace HuntroxGames.Utils
                 var isSelect = index == commandSuggestion.CurrentIndex;
                 var text = suggestionContent.GetChild(i).GetComponentInChildren<TextMeshProUGUI>();
                 text.color = isSelect ? selectedSuggestionTextColor : suggestionTextColor;
-                //check if the selected suggestion is visible if not scroll to it
+                
+
                 if (!isSelect) 
                     continue;
-
+                
                 UpdateLayout();
-
+                ScrollToSuggestion(text.rectTransform);
+           
+    
             }
             autoCompleteText.text = commandInput.IsNullOrEmpty() ? "" : commandSuggestion.AutoComplete(false);
         }
