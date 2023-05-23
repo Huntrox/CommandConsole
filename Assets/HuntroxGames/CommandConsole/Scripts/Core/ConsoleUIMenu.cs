@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,10 +14,12 @@ namespace HuntroxGames.Utils
         [SerializeField] private RectTransform uiParentPanel;
         [SerializeField] private TMP_InputField consoleInputField;
         [SerializeField] private TextMeshProUGUI autoCompleteText;
-        [Header("suggestion Settings")]
+        [Header("Suggestion Settings")]
         [SerializeField] private GameObject suggestionTextPrefab;
-        [SerializeField] private RectTransform suggestionContent;
+        [SerializeField] private ScrollRect suggestionView;
         [SerializeField] private RectTransform suggestionParent;
+        [SerializeField] private Color suggestionTextColor = Color.white;
+        [SerializeField] private Color selectedSuggestionTextColor = new Color32(65, 183, 25, 255);
         [Header("Inputs")]
         [SerializeField] private KeyCode completionKey = KeyCode.Tab;
 
@@ -26,43 +27,65 @@ namespace HuntroxGames.Utils
 
         private string commandInput = "";
 
+        private RectTransform suggestionContent;
         private void Start()
         {
             consoleInputField.onValueChanged.AddListener(OnConsoleInputValueChanged);
             consoleInputField.onSubmit.AddListener(OnConsoleInputSubmit);
+            suggestionContent = suggestionView.content;
         }
 
         
-        private void OnConsoleInputSubmit(string arg0)
+        private void OnConsoleInputSubmit(string value)
         {
-            HandleCommandInput(arg0, InsertLog);
+            HandleCommandInput(value, InsertLog);
             consoleInputField.text = "";
             consoleInputField.Select();
             commandSuggestion.SetInput(commandInput);
-            UpdateSuggestions();
+            LoadSuggestions();
         }
 
         private void OnConsoleInputValueChanged(string value)
         {
             commandInput = value;
             commandSuggestion.SetInput(commandInput);
-            autoCompleteText.text = commandInput.IsNullOrEmpty()? "" : commandSuggestion.AutoComplete(false);
-            UpdateSuggestions();
+            autoCompleteText.text = commandInput.IsNullOrEmpty() ? "" : commandSuggestion.AutoComplete(false);
+            LoadSuggestions();
         }
 
-        private void UpdateSuggestions()
+        private void LoadSuggestions()
         {
             var suggestions = commandSuggestion.Suggestions;
             
             suggestionContent.DestroyAllChildren();
+            var index = 0;
             foreach (var suggestion in suggestions)
             {
                 var textGo = Instantiate(suggestionTextPrefab, suggestionContent).GetComponentInChildren<TextMeshProUGUI>();
                 textGo.text = suggestion;
+                textGo.color = index == commandSuggestion.CurrentIndex ? selectedSuggestionTextColor : suggestionTextColor;
+                index++;
             }
-            suggestionParent.gameObject.SetActive(!suggestions.IsNullOrEmpty() && !commandInput.IsNullOrEmpty());
+            suggestionParent.gameObject.SetActive(suggestions.Count > 1 && !commandInput.IsNullOrEmpty());
         }
 
+        private void UpdateSuggestions()
+        {
+            for (int i = 0; i < suggestionContent.childCount; i++)
+            {
+                var index = i;
+                var isSelect = index == commandSuggestion.CurrentIndex;
+                var text = suggestionContent.GetChild(i).GetComponentInChildren<TextMeshProUGUI>();
+                text.color = isSelect ? selectedSuggestionTextColor : suggestionTextColor;
+                //check if the selected suggestion is visible if not scroll to it
+                if (!isSelect) 
+                    continue;
+
+                UpdateLayout();
+
+            }
+            autoCompleteText.text = commandInput.IsNullOrEmpty() ? "" : commandSuggestion.AutoComplete(false);
+        }
 
         private void UpdateLayout()
         {
@@ -81,29 +104,7 @@ namespace HuntroxGames.Utils
             UpdateLayout();
         }
         
-        private string FormatInput(bool dateFormat)
-        {
-            var color = ColorUtility.ToHtmlStringRGBA(inputPrefixColor);
-            switch (inputPrefixStyle)
-            {
-                case InputPrefixStyle.Date:
-                    var date = DateTime.Now;
-                    return dateFormat
-                        ? $"[<color=#{color}>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] "
-                        : "           ";
-                case InputPrefixStyle.Dash:
-                    return dateFormat ? $"<color=#{color}>-</color> " : "  ";
-                case InputPrefixStyle.None:
-                    return "";
-                case InputPrefixStyle.Custom:
-                    var whiteSpace = " ";
-                    for (int i = 0; i < customInputPrefix.Length; i++)
-                        whiteSpace += " ";
-                    return dateFormat ? $"<color=#{color}>{customInputPrefix}</color> " : whiteSpace;
-            }
 
-            return "";
-        }
         
         [ConsoleCommand("Help", "", false, MonoObjectExecutionType.FirstInHierarchy)]
         private void HelpCommand()
@@ -129,14 +130,39 @@ namespace HuntroxGames.Utils
             if(commandInput.IsNullOrEmpty()) return;
             if (Input.GetKeyDown(completionKey))
             {
-                var autoComplete = commandSuggestion.AutoComplete(true);
+                var autoComplete = commandSuggestion.AutoComplete(false);
                 if (!autoComplete.IsNullOrEmpty())
                 {
                     consoleInputField.text = autoComplete;
+                    consoleInputField.MoveTextEnd(false);
                 }
+            }
+            
+            //if(!isActive) return;
+            if(commandSuggestion.Suggestions.IsNullOrEmpty()) return;
+            
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                
+                commandSuggestion.Previous();
+                UpdateSuggestions();
+            }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                commandSuggestion.Next();
+                UpdateSuggestions();
             }
         }
 
+        [ConsoleCommand]
+        private void ClearConsole()
+        {
+            logList.Clear();
+            consoleHistory.Clear();
+            LoadSuggestions();
+            UpdateLayout();
+        }
+        
         protected override void CommandExecuteInvoke(string cmd)
         {
             base.CommandExecuteInvoke(cmd);

@@ -550,10 +550,12 @@ MonoBehaviour:
   uiParentPanel: {fileID: 1641695019}
   consoleInputField: {fileID: 2045213561}
   autoCompleteText: {fileID: 1755406679}
-  suggestionTextPrefab: {fileID: 7825148408401690701, guid: 62c4e0b6f73a3d246a686ee37094fb9f,
+  suggestionTextPrefab: {fileID: 7825148408401690701, guid: c1bad4e6b79d28a40abcbc131cb1ae16,
     type: 3}
-  suggestionContent: {fileID: 33085770}
+  suggestionView: {fileID: 1156538025}
   suggestionParent: {fileID: 1168908633}
+  suggestionTextColor: {r: 1, g: 1, b: 1, a: 1}
+  selectedSuggestionTextColor: {r: 0.25490198, g: 0.7176471, b: 0.09803922, a: 1}
   completionKey: 9
 --- !u!1 &426261933
 GameObject:
@@ -912,8 +914,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enter Command...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5a0ab53d22adac74e9d074601b6f5122, type: 2}
+  m_sharedMaterial: {fileID: 6007617547679401080, guid: 5a0ab53d22adac74e9d074601b6f5122,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1472,7 +1475,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.9999998}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1658,8 +1661,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5a0ab53d22adac74e9d074601b6f5122, type: 2}
+  m_sharedMaterial: {fileID: 6007617547679401080, guid: 5a0ab53d22adac74e9d074601b6f5122,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2108,8 +2112,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5a0ab53d22adac74e9d074601b6f5122, type: 2}
+  m_sharedMaterial: {fileID: 6007617547679401080, guid: 5a0ab53d22adac74e9d074601b6f5122,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

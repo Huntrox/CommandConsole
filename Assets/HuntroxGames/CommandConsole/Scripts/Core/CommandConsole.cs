@@ -136,7 +136,29 @@ namespace HuntroxGames.Utils
             CommandExecuteInvoke(cmd);
             CommandExecuteWithParametersInvoke(cmd, @params);
         }
+        protected string FormatInput(bool dateFormat)
+        {
+            var color = ColorUtility.ToHtmlStringRGBA(inputPrefixColor);
+            switch (inputPrefixStyle)
+            {
+                case InputPrefixStyle.Date:
+                    var date = DateTime.Now;
+                    return dateFormat
+                        ? $"[<color=#{color}>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] "
+                        : "           ";
+                case InputPrefixStyle.Dash:
+                    return dateFormat ? $"<color=#{color}>-</color> " : "  ";
+                case InputPrefixStyle.None:
+                    return "";
+                case InputPrefixStyle.Custom:
+                    var whiteSpace = " ";
+                    for (int i = 0; i < customInputPrefix.Length; i++)
+                        whiteSpace += " ";
+                    return dateFormat ? $"<color=#{color}>{customInputPrefix}</color> " : whiteSpace;
+            }
 
+            return "";
+        }
 
         protected virtual void CommandExecuteInvoke(string cmd)
         {

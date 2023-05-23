@@ -17,6 +17,11 @@ namespace HuntroxGames.Utils
         /// Returns the current auto complete suggestions matching the input
         /// </summary>
         public List<string> Suggestions => AutoCompleteSuggestions();
+        
+        public int CurrentIndex => index;
+        
+        
+        
 
         public void SetInput(string input)
         {
