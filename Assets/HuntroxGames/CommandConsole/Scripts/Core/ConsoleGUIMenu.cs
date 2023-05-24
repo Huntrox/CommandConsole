@@ -208,13 +208,14 @@ namespace HuntroxGames.Utils
                 return;
 
             if (!current.isKey) return;
+            var isShift = current.shift;
             switch (current.keyCode)
             {
                 case KeyCode.UpArrow:
-                    HandleConsoleNavigation(ConsoleNavigation.Up);
+                    HandleConsoleNavigation(ConsoleNavigation.Up, isShift);
                     break;
                 case KeyCode.DownArrow:
-                    HandleConsoleNavigation(ConsoleNavigation.Down);
+                    HandleConsoleNavigation(ConsoleNavigation.Down, isShift);
                     break;
                 default:
                 {
@@ -246,22 +247,23 @@ namespace HuntroxGames.Utils
         }
 
 
-        private void HandleConsoleNavigation(ConsoleNavigation navigation)
+        private void HandleConsoleNavigation(ConsoleNavigation navigation, bool isShift = false)
         {
             switch (navigation)
             {
                 case ConsoleNavigation.Up:
-                    //if (commandInput.IsNullOrEmpty() || commandInput != commandSuggestion.AutoCompleteSuggestion)
+                    if (isShift)
                         commandInput = consoleHistory.Previous(commandInput);
-                    // else
-                    //     commandSuggestion.Previous();
+                    else
+                       commandSuggestion.Previous();
                     TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Down:
-                    //if (commandInput.IsNullOrEmpty() || commandInput != commandSuggestion.AutoCompleteSuggestion)
+                    
+                    if (isShift)
                         commandInput = consoleHistory.Next(commandInput);
-                    // else
-                    //     commandSuggestion.Next();
+                    else
+                        commandSuggestion.Next();
                     TextFieldLineEnd();
                     break;
                 case ConsoleNavigation.Left:
