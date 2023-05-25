@@ -62,21 +62,23 @@ namespace HuntroxGames.Utils
             var index = 0;
             foreach (var suggestion in suggestions)
             {
-                var textGo = Instantiate(suggestionTextPrefab, suggestionContent).GetComponentInChildren<TextMeshProUGUI>();
-                textGo.text = suggestion;
-                textGo.color = index == commandSuggestion.CurrentIndex ? selectedSuggestionTextColor : suggestionTextColor;
-                var eventTrigger = textGo.transform.parent.GetComponent<EventTrigger>();
-                eventTrigger.AddListener(EventTriggerType.Select, OnSuggestionSelect);
+                var textGo = Instantiate(suggestionTextPrefab, suggestionContent);
+                var textTmp = textGo.GetComponentInChildren<TextMeshProUGUI>();
+                textTmp.text = suggestion;
+                textTmp.color = index == commandSuggestion.CurrentIndex ? selectedSuggestionTextColor : suggestionTextColor;
+                var eventTrigger = textGo.GetComponent<SuggestionTextUI>();
+                eventTrigger.SetOnSelectAction(rectTransform =>
+                {
+                    consoleInputField.text = rectTransform.GetComponentInChildren<TextMeshProUGUI>().text;
+                    consoleInputField.MoveToEndOfLine( false,false);
+                    commandSuggestion.SetInput(consoleInputField.text);
+                    LoadSuggestions();
+                });
                 index++;
             }
             suggestionParent.gameObject.SetActive(suggestions.Count > 1 && !commandInput.IsNullOrEmpty());
         }
 
-        private void OnSuggestionSelect(BaseEventData eventData)
-        {
-            var rect = eventData.selectedObject.GetComponent<RectTransform>();
-            ScrollToSuggestion(rect);
-        }
 
         private void ScrollToSuggestion(RectTransform target)
         {
