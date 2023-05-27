@@ -145,11 +145,12 @@ namespace HuntroxGames.Utils
             var dateText = FormatInput(dateFormat);
             var log = $"{dateText}{text}";
             logList.Add(log);
+            var isChecker = checker && content.childCount % 2 == 0;
             var textGo = Instantiate(textPrefab, content).GetComponentInChildren<TextMeshProUGUI>();
             textGo.text = log;
             textGo.fontSize = outputFontSize;
-            if (checker && content.childCount-1 % 2 == 0)
-                textGo.GetComponentInParent<Image>().color.SetAlpha(0.03f);
+            if (isChecker)
+                textGo.GetComponentInParent<Image>().color = new Color(1, 1, 1, 0.03f);
 
             UpdateLayout();
         }
