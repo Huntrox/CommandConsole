@@ -9,13 +9,6 @@ namespace HuntroxGames.Utils
 
         [Header("GUI Style")] [SerializeField] 
         private Font font;
-
-        
-        [Header("Input")]
-        [SerializeField] private KeyCode autoCompletionKey = KeyCode.Tab;
-        [SerializeField] private KeyCode submitKey = KeyCode.Return;
-        
-        
         
 
         private Vector2 scroll;

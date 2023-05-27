@@ -8,6 +8,11 @@ namespace HuntroxGames.Utils
     
     public class ConsoleUIMenu : CommandConsole
     {
+        [Header("UI Font Style")]
+        [SerializeField] private float inputFontSize = 22;
+        [SerializeField] private float outputFontSize = 22;
+        [SerializeField] private float parameterFontSize = 22;
+        [SerializeField] private float autoCompleteFontSize = 22;
         [Header("UI Settings")]
         [SerializeField] private GameObject textPrefab;
         [SerializeField] private RectTransform content;
@@ -21,10 +26,6 @@ namespace HuntroxGames.Utils
         [SerializeField] private RectTransform suggestionParent;
         [SerializeField] private Color suggestionTextColor = Color.white;
         [SerializeField] private Color selectedSuggestionTextColor = new Color32(65, 183, 25, 255);
-        [Header("Inputs")]
-        [SerializeField] private KeyCode completionKey = KeyCode.Tab;
-
-        
 
         private string commandInput = "";
 
@@ -34,6 +35,9 @@ namespace HuntroxGames.Utils
             consoleInputField.onValueChanged.AddListener(OnConsoleInputValueChanged);
             consoleInputField.onSubmit.AddListener(OnConsoleInputSubmit);
             suggestionContent = suggestionView.content;
+            foreach (var tmp in consoleInputField.GetComponentsInChildren<TextMeshProUGUI>())
+                tmp.fontSize = inputFontSize;
+            
         }
 
         
@@ -51,6 +55,7 @@ namespace HuntroxGames.Utils
             commandInput = value;
             commandSuggestion.SetInput(commandInput);
             autoCompleteText.text = commandInput.IsNullOrEmpty() ? "" : commandSuggestion.AutoComplete(false);
+            autoCompleteText.fontSize = inputFontSize;
             LoadSuggestions();
         }
 
@@ -65,6 +70,7 @@ namespace HuntroxGames.Utils
                 var textGo = Instantiate(suggestionTextPrefab, suggestionContent);
                 var textTmp = textGo.GetComponentInChildren<TextMeshProUGUI>();
                 textTmp.text = suggestion;
+                textTmp.fontSize = autoCompleteFontSize;
                 textTmp.color = index == commandSuggestion.CurrentIndex ? selectedSuggestionTextColor : suggestionTextColor;
                 var eventTrigger = textGo.GetComponent<SuggestionTextUI>();
                 eventTrigger.SetOnSelectAction(rectTransform =>
@@ -139,6 +145,7 @@ namespace HuntroxGames.Utils
             logList.Add(log);
             var textGo = Instantiate(textPrefab, content).GetComponentInChildren<TextMeshProUGUI>();
             textGo.text = log;
+            textGo.fontSize = outputFontSize;
             UpdateLayout();
         }
         
@@ -166,7 +173,8 @@ namespace HuntroxGames.Utils
         private void Update()
         {
             if(commandInput.IsNullOrEmpty()) return;
-            if (Input.GetKeyDown(completionKey))
+            
+            if (Input.GetKeyDown(autoCompletionKey))
             {
                 var autoComplete = commandSuggestion.AutoComplete(false);
                 if (!autoComplete.IsNullOrEmpty())
@@ -181,7 +189,6 @@ namespace HuntroxGames.Utils
             
             if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                
                 commandSuggestion.Previous();
                 UpdateSuggestions();
             }

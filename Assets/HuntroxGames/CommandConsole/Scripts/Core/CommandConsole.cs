@@ -53,6 +53,11 @@ namespace HuntroxGames.Utils
         [SerializeField] protected InputPrefixStyle inputPrefixStyle = InputPrefixStyle.Date;
         [SerializeField] protected Color inputPrefixColor = Color.yellow;
         [SerializeField] protected string customInputPrefix = "";
+        [Header("Input")]
+        [SerializeField] protected KeyCode autoCompletionKey = KeyCode.Tab;
+        [SerializeField] protected KeyCode submitKey = KeyCode.Return;
+        
+        
         
         public ObjectNameDisplayType ObjectNameDisplay => objectNameDisplay;
 
