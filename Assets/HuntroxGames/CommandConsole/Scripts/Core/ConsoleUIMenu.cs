@@ -20,6 +20,7 @@ namespace HuntroxGames.Utils
         [SerializeField] private RectTransform uiParentPanel;
         [SerializeField] private TMP_InputField consoleInputField;
         [SerializeField] private TextMeshProUGUI autoCompleteText;
+        [SerializeField] private bool checker = false;
         [Header("Suggestion Settings")]
         [SerializeField] private GameObject suggestionTextPrefab;
         [SerializeField] private ScrollRect suggestionView;
@@ -47,6 +48,7 @@ namespace HuntroxGames.Utils
             consoleInputField.text = "";
             consoleInputField.Select();
             commandSuggestion.SetInput(commandInput);
+            consoleInputField.ActivateInputField();
             LoadSuggestions();
         }
 
@@ -146,6 +148,9 @@ namespace HuntroxGames.Utils
             var textGo = Instantiate(textPrefab, content).GetComponentInChildren<TextMeshProUGUI>();
             textGo.text = log;
             textGo.fontSize = outputFontSize;
+            if (checker && content.childCount-1 % 2 == 0)
+                textGo.GetComponentInParent<Image>().color.SetAlpha(0.03f);
+
             UpdateLayout();
         }
         
