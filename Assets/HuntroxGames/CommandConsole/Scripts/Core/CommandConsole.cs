@@ -21,7 +21,7 @@ namespace HuntroxGames.Utils
 
         public enum InputPrefixStyle
         {
-            [InspectorName("[HH:MM:SS] Text")] Date,
+            [InspectorName("[Date Format] Text")] Date,
             [InspectorName("- Text")] Dash,
             [InspectorName("Text")] None,
             Custom
@@ -53,6 +53,7 @@ namespace HuntroxGames.Utils
         [SerializeField] protected InputPrefixStyle inputPrefixStyle = InputPrefixStyle.Date;
         [SerializeField] protected Color inputPrefixColor = Color.yellow;
         [SerializeField] protected string customInputPrefix = "";
+        [SerializeField] protected string dateFormat = "HH:mm:ss";
         [Header("Input")]
         [SerializeField] protected KeyCode autoCompletionKey = KeyCode.Tab;
         [SerializeField] protected KeyCode submitKey = KeyCode.Return;
@@ -98,6 +99,13 @@ namespace HuntroxGames.Utils
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
+        /// <summary>
+        /// this method will be called when a unity log message is received
+        /// you can override this method to handle the log messages as you want 
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="stacktrace"></param>
+        /// <param name="type"></param>
         protected virtual void OnUnityLogMessageReceived(string condition, string stacktrace, LogType type)
         {
         }
@@ -141,25 +149,23 @@ namespace HuntroxGames.Utils
             CommandExecuteInvoke(cmd);
             CommandExecuteWithParametersInvoke(cmd, @params);
         }
-        protected string FormatInput(bool dateFormat)
+        protected string FormatInput(bool prefix)
         {
             var color = ColorUtility.ToHtmlStringRGBA(inputPrefixColor);
             switch (inputPrefixStyle)
             {
                 case InputPrefixStyle.Date:
                     var date = DateTime.Now;
-                    return dateFormat
-                        ? $"[<color=#{color}>{date.Hour:00}:{date.Minute:00}:{date.Second:00}</color>] "
-                        : "           ";
+                    return prefix ? $"<color=#{color}>[{date.ToString(dateFormat)}]</color> " : "           ";
                 case InputPrefixStyle.Dash:
-                    return dateFormat ? $"<color=#{color}>-</color> " : "  ";
+                    return prefix ? $"<color=#{color}>-</color> " : "  ";
                 case InputPrefixStyle.None:
                     return "";
                 case InputPrefixStyle.Custom:
                     var whiteSpace = " ";
                     for (int i = 0; i < customInputPrefix.Length; i++)
                         whiteSpace += " ";
-                    return dateFormat ? $"<color=#{color}>{customInputPrefix}</color> " : whiteSpace;
+                    return prefix ? $"<color=#{color}>{customInputPrefix}</color> " : whiteSpace;
             }
 
             return "";

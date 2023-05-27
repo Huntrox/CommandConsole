@@ -4,7 +4,10 @@ namespace HuntroxGames.Utils
 {
 	public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
 	{
+		
 		protected static T instance;
+		[SerializeField] protected bool dontDestroyOnLoad = false;
+		
 		public static T Instance
 		{
 			get
@@ -31,7 +34,8 @@ namespace HuntroxGames.Utils
 #if UNITY_EDITOR
 				if (UnityEditor.EditorApplication.isPlaying)
 #endif
-					DontDestroyOnLoad(gameObject);
+					if (dontDestroyOnLoad)
+						DontDestroyOnLoad(gameObject);
 			}
 			else
 			{
