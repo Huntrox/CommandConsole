@@ -347,6 +347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3374b417e1590924ea61e6fdcbe49fbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 0
   unityLogMessages: 0
   fetchMode: 1
   objectNameDisplay: 5
@@ -357,9 +358,10 @@ MonoBehaviour:
   inputPrefixStyle: 0
   inputPrefixColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   customInputPrefix: 
-  font: {fileID: 0}
+  dateFormat: HH:mm:ss
   autoCompletionKey: 9
   submitKey: 13
+  font: {fileID: 0}
 --- !u!4 &185118163
 Transform:
   m_ObjectHideFlags: 0
@@ -493,6 +495,7 @@ GameObject:
   m_Component:
   - component: {fileID: 395281808}
   - component: {fileID: 395281809}
+  - component: {fileID: 395281810}
   m_Layer: 5
   m_Name: CommandConsoleUI
   m_TagString: Untagged
@@ -533,6 +536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d52719d82e5d2d4dba5386ce1c0358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 0
   unityLogMessages: 0
   fetchMode: 1
   objectNameDisplay: 5
@@ -541,8 +545,15 @@ MonoBehaviour:
   parameterColor: {r: 1, g: 1, b: 1, a: 0.25}
   autoCompleteColor: {r: 1, g: 1, b: 1, a: 0.25}
   inputPrefixStyle: 0
-  inputPrefixColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  inputPrefixColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
   customInputPrefix: '>'
+  dateFormat: HH:MM:SS
+  autoCompletionKey: 9
+  submitKey: 13
+  inputFontSize: 22
+  outputFontSize: 22
+  parameterFontSize: 22
+  autoCompleteFontSize: 22
   textPrefab: {fileID: 7825148408401690701, guid: 62c4e0b6f73a3d246a686ee37094fb9f,
     type: 3}
   content: {fileID: 286062068}
@@ -550,13 +561,43 @@ MonoBehaviour:
   uiParentPanel: {fileID: 1641695019}
   consoleInputField: {fileID: 2045213561}
   autoCompleteText: {fileID: 1755406679}
+  checker: 1
   suggestionTextPrefab: {fileID: 7825148408401690701, guid: c1bad4e6b79d28a40abcbc131cb1ae16,
     type: 3}
   suggestionView: {fileID: 1156538025}
   suggestionParent: {fileID: 1168908633}
   suggestionTextColor: {r: 1, g: 1, b: 1, a: 1}
   selectedSuggestionTextColor: {r: 0.25490198, g: 0.7176471, b: 0.09803922, a: 1}
-  completionKey: 9
+--- !u!114 &395281810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395281807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ac2730bf472f14faebd7002ea37743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  consoleKey: 96
+  consoleAction:
+    m_Name: <Keyboard>/backquote
+    m_Type: 1
+    m_ExpectedControlType: 
+    m_Id: 8fc18416-7861-49c6-b18c-1fe024d8673b
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 8cb5929f-e6f7-4520-bdea-9c6082fdf679
+      m_Path: <Keyboard>/backquote
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: <Keyboard>/backquote
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &426261933
 GameObject:
   m_ObjectHideFlags: 0
@@ -2027,14 +2068,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: b1268f56b9cf98b418768c4fab846df3, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
