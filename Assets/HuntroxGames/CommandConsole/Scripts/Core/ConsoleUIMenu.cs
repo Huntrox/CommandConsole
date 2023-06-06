@@ -78,8 +78,13 @@ namespace HuntroxGames.Utils
                 eventTrigger.SetOnSelectAction(rectTransform =>
                 {
                     consoleInputField.text = rectTransform.GetComponentInChildren<TextMeshProUGUI>().text;
-                    consoleInputField.MoveToEndOfLine( false,false);
                     commandSuggestion.SetInput(consoleInputField.text);
+                    EventSystem.current.SetSelectedGameObject(consoleInputField.gameObject);
+                    consoleInputField.MoveTextEnd(false);
+                    consoleInputField.MoveToEndOfLine(false, false);
+                    consoleInputField.DeactivateInputField();
+
+                    //consoleInputField.MoveToEndOfLine( false,true);
                     LoadSuggestions();
                 });
                 index++;
@@ -90,7 +95,10 @@ namespace HuntroxGames.Utils
 
         private void ScrollToSuggestion(RectTransform target)
         {
-            //heck if the selected suggestion in content is visible in the view if not scroll to it
+            //check if the selected suggestion in content is visible in the view if not scroll to it
+            
+            //TODO: fix this
+            
             // var objPosition = (Vector2)suggestionView.transform.InverseTransformPoint(target.position);
             // var scrollHeight = suggestionView.GetComponent<RectTransform>().rect.height;
             // var objHeight = target.rect.height;

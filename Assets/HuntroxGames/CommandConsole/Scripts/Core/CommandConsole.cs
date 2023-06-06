@@ -125,7 +125,7 @@ namespace HuntroxGames.Utils
         
         /// <summary>
         /// can use this method to open the console.
-        /// this will also invoke the <see cref="OnConsole"/> event with state value (Active/Deactive)
+        /// this will also invoke the <see cref="OnConsole"/> event with state value (Active/Deactivate)
         /// </summary>
         public virtual void ToggleConsole()
         {
