@@ -24,8 +24,10 @@ namespace HuntroxGames.Utils
         private static BindingFlags bindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-        private static CommandOptionsCallback optionsCallback;
+        private static Func<CommandOptionsCallback,string> optionsCallbackFormatter;
 
+        private static CommandOptionsCallback optionsCallback;
+        
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         public static void OnInitialize() 
@@ -40,6 +42,9 @@ namespace HuntroxGames.Utils
             return list;
         }
 
+        
+        public static void SetOptionsFormatter(Func<CommandOptionsCallback,string> formatter)
+            => optionsCallbackFormatter = formatter;
         /// <summary>
         /// Fetches all the commands from the static classes and the MonoBehaviours in the scene.
         /// This can be called manually if you want to update the commands in the console.
@@ -227,6 +232,15 @@ namespace HuntroxGames.Utils
             Action<string, bool> executeLogCallback)
         {
             optionsCallback = optnsCallback;
+            
+            if (optionsCallbackFormatter != null)
+            {
+                var log = optionsCallbackFormatter(optnsCallback);
+                executeLogCallback?.Invoke(log, false);
+                return;
+            }
+            
+            
             var optionsLog = "Options: ";
             var index = 0;
             foreach (var option in optionsCallback.options)

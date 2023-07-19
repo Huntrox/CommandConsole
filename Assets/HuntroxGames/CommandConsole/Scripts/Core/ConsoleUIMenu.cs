@@ -13,6 +13,8 @@ namespace HuntroxGames.Utils
         [SerializeField] private float outputFontSize = 22;
         [SerializeField] private float parameterFontSize = 22;
         [SerializeField] private float autoCompleteFontSize = 22;
+        [Header("Command Options Font Style")]
+        [SerializeField] private Color optionTextColor = Color.white;
         [Header("UI Settings")]
         [SerializeField] private GameObject textPrefab;
         [SerializeField] private RectTransform content;
@@ -33,6 +35,7 @@ namespace HuntroxGames.Utils
         private RectTransform suggestionContent;
         private void Start()
         {
+            CommandsHandler.SetOptionsFormatter(OptionsCallbackFormatter);
             consoleInputField.onValueChanged.AddListener(OnConsoleInputValueChanged);
             consoleInputField.onSubmit.AddListener(OnConsoleInputSubmit);
             suggestionContent = suggestionView.content;
@@ -163,6 +166,19 @@ namespace HuntroxGames.Utils
             UpdateLayout();
         }
         
+        private string OptionsCallbackFormatter(CommandOptionsCallback optnsCallback)
+        {
+            var optionsLog = "";
+            var index = 0;
+            var color = ColorUtility.ToHtmlStringRGBA(optionTextColor);
+            var whiteSpace = "           ";
+            foreach (var option in optnsCallback.options)
+            {
+                optionsLog += $"<color=#{color}>{option.Value.optionName}[{index}]\n{whiteSpace}</color>";
+                index++;
+            }
+            return optionsLog;
+        }
 
         
         [ConsoleCommand("Help", "", false, MonoObjectExecutionType.FirstInHierarchy)]

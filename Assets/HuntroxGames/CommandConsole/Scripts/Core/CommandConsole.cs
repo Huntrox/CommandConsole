@@ -145,6 +145,7 @@ namespace HuntroxGames.Utils
             if (fetchMode.HasFlag(FetchMode.BeforeExecutingAnyCommand))
                 CommandsHandler.FetchCommandAttributes();
             var (cmd, @params) = ConsoleCommandHelper.SplitCommand(commandInput);
+            
             CommandsHandler.ExecuteCommand(cmd, @params, executionLogCallback);
             CommandExecuteInvoke(cmd);
             CommandExecuteWithParametersInvoke(cmd, @params);
@@ -170,7 +171,6 @@ namespace HuntroxGames.Utils
 
             return "";
         }
-
         protected virtual void CommandExecuteInvoke(string cmd)
         {
             OnCommandExecuted?.Invoke(cmd);
