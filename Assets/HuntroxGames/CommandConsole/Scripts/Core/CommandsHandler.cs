@@ -297,7 +297,7 @@ namespace HuntroxGames.Utils
             foreach (var assembly in assemblies)
             {
                 var types = assembly.GetTypes();
-                foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+                foreach (var type in types)
                 {
                     var flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
                     var members = type.GetMembers(flags)
