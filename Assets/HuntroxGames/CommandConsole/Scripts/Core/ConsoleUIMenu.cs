@@ -174,9 +174,12 @@ namespace HuntroxGames.Utils
             var whiteSpace = "           ";
             foreach (var option in optnsCallback.options)
             {
-                optionsLog += $"<color=#{color}>{option.Value.optionName}[{index}]\n{whiteSpace}</color>";
+                optionsLog += $"<color=#{color}>Option[{index}]: {option.Value.optionName}\n\n{whiteSpace}</color>";
                 index++;
             }
+            //trim new line from the end    
+                    
+            optionsLog = optionsLog.TrimEnd('\n');
             return optionsLog;
         }
 
