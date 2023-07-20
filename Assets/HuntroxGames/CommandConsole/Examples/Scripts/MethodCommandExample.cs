@@ -8,7 +8,7 @@ namespace HuntroxGames.Utils
     {
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        private Vector3 targetPosition;
+        [SerializeField]private Vector3 targetPosition;
 
         private void Update() =>
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * 2);

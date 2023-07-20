@@ -96,32 +96,8 @@ namespace HuntroxGames.Utils
         }
 
 
-        private void ScrollToSuggestion(RectTransform target)
-        {
-            //check if the selected suggestion in content is visible in the view if not scroll to it
-            
-            //TODO: fix this
-            
-            // var objPosition = (Vector2)suggestionView.transform.InverseTransformPoint(target.position);
-            // var scrollHeight = suggestionView.GetComponent<RectTransform>().rect.height;
-            // var objHeight = target.rect.height;
-            //
-            // if (objPosition.y > scrollHeight / 2)
-            // {
-            //     suggestionContent.localPosition = new Vector2(0,
-            //         suggestionContent.localPosition.y - objHeight - objHeight/2);
-            // }
-            //
-            // if (objPosition.y < -scrollHeight / 2)
-            // {
-            //     suggestionContent.localPosition = new Vector2(0,
-            //         suggestionContent.localPosition.y + objHeight  + objHeight/2);
-            // }
-            var anchoredPosition = 
-                (Vector2)suggestionView.transform.InverseTransformPoint(suggestionContent.position)
-                - (Vector2)suggestionView.transform.InverseTransformPoint(target.position);
-            suggestionContent.anchoredPosition = new Vector2(0, anchoredPosition.y);
-        }
+        private void ScrollToSuggestion(RectTransform target) 
+            => suggestionView.GetComponent<ScrollRectEnsureVisible>().CenterOnItem(target);
 
         private void UpdateSuggestions()
         {
