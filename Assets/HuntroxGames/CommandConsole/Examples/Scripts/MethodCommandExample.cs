@@ -91,6 +91,15 @@ namespace HuntroxGames.Utils
                 new CommandOption("Sudbury", () => Debug.Log("teleported to Sudbury")),
                 new CommandOption("Hogsfeet", () => Debug.Log("teleported to Hogsfeet")));
 
+        [ConsoleCommand]
+        public CommandOptionsCallback SetGraphics()
+        {
+            var options = new CommandOptionsCallback();
+            options.AddOption("Low", () => QualitySettings.SetQualityLevel(0));
+            options.AddOption("Medium", () => QualitySettings.SetQualityLevel(1));
+            options.AddOption("High", () => QualitySettings.SetQualityLevel(2));
+            return options;
+        }
         #endregion
     }
 }

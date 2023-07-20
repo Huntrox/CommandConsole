@@ -42,6 +42,9 @@ namespace HuntroxGames.Utils
 
             return false;
         }
+
+        public void AddOption(string optionName, Action callback) 
+            => options.Add(optionName.ToUpper(),new CommandOption(optionName.ToUpper(),callback));
     }
 
     public class CommandOption
