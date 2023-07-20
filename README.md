@@ -6,8 +6,10 @@ very simple Command Console to create cheat codes and easy developers commands
 - Static and non Static Objects
 - Public and Private
 - Method Return Types
-- Method Prameters
+- Method Prameters (float ,int, string, Vector2-3, Color, Enums) and more
 - Auto Complete Suggestions
+- Custom Command Options Callback
+- Customizable UI
 ## How To Use
 
 simply add ConsoleCommandAttribute to any field property or method
@@ -60,3 +62,27 @@ simply add ConsoleCommandAttribute to any field property or method
         }
 ```
 ![gif](https://i.imgur.com/TDVH345.gif)
+
+- Custom Command Options Callback
+
+  allows you to add your list of executable options in one command 
+```c#
+        [ConsoleCommand]
+        public CommandOptionsCallback SetGraphics()
+        {
+            var options = new CommandOptionsCallback();
+            options.AddOption("Low", () => QualitySettings.SetQualityLevel(0));
+            options.AddOption("Medium", () => QualitySettings.SetQualityLevel(1));
+            options.AddOption("High", () => QualitySettings.SetQualityLevel(2));
+            return options;
+        }
+
+        [ConsoleCommand]
+        public CommandOptionsCallback TeleportTo()
+            => new CommandOptionsCallback(
+                new CommandOption("Wolfden", () => Debug.Log("teleported to Wolfden")),
+                new CommandOption("Sudbury", () => Debug.Log("teleported to Sudbury")),
+                new CommandOption("Hogsfeet", () => Debug.Log("teleported to Hogsfeet")));
+   
+```
+ ![img](https://i.imgur.com/mCb7dZm.png)
