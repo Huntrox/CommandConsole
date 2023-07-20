@@ -107,7 +107,7 @@ namespace HuntroxGames.Utils
                 var isSelect = index == commandSuggestion.CurrentIndex;
                 var text = suggestionContent.GetChild(i).GetComponentInChildren<TextMeshProUGUI>();
                 text.color = isSelect ? selectedSuggestionTextColor : suggestionTextColor;
-                
+                suggestionContent.GetChild(i).GetComponent<Image>().color = isSelect ? new Color(1, 1, 1, 0.3f) : Color.clear;
 
                 if (!isSelect) 
                     continue;
@@ -150,12 +150,11 @@ namespace HuntroxGames.Utils
             var whiteSpace = "           ";
             foreach (var option in optnsCallback.options)
             {
-                optionsLog += $"<color=#{color}>Option[{index}]: {option.Value.optionName}\n\n{whiteSpace}</color>";
+                optionsLog += $"<color=#{color}>Option[{index}]: {option.Value.optionName}</color>";
                 index++;
+                if (index < optnsCallback.options.Count)
+                    optionsLog += $"\n\n{whiteSpace}";
             }
-            //trim new line from the end    
-                    
-            optionsLog = optionsLog.TrimEnd('\n');
             return optionsLog;
         }
 
