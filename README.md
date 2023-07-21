@@ -14,6 +14,8 @@ very simple Command Console to create cheat codes and easy developers commands
 
 simply add ConsoleCommandAttribute to any field property or method
 ```c#
+[ConsoleCommand]
+//or with Constructor parameters
 [ConsoleCommand(command: "SetPlayerGold", description: "Sets Player Gold Amount",objectExecutionType: MonoObjectExecutionType.Option)]
 ```
 ### Constructor parameters
@@ -38,18 +40,25 @@ simply add ConsoleCommandAttribute to any field property or method
         {
             Debug.Log("DIE DIE DIE!");
         }
-        
+        //private
         [ConsoleCommand(command: "SetPlayerGold", description: "",helpMenu: true,objectExecutionType: MonoObjectExecutionType.Option)]
-        public void MethodWithArguments(string playerName, int gold)
+        private void MethodWithArguments(string playerName, int gold)
         {
             Debug.Log($"player {playerName}'s gold: {gold}");
+        }
+        //static
+        [ConsoleCommand]
+        private static void LoadLevel(string levelName)
+        {
+            SceneManager.LoadScene(levelName);
         }
 ```
 ![gif](https://i.imgur.com/T07V2Dx.gif)
 - Fields and Properties
 ```c#
         [ReadOnly] public int health = 0;
-        [ConsoleCommand("SetHealth","[int]")]
+        //Multi Commands
+        [ConsoleCommand("SetHealth","[Integer Input]")]
         [ConsoleCommand("GetHealth")]
         public int Health
         {
