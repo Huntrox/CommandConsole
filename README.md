@@ -95,3 +95,38 @@ simply add ConsoleCommandAttribute to any field property or method
    
 ```
  ![img](https://i.imgur.com/mCb7dZm.png)
+
+## Api
+
+| Class / Method              | Description                                                                                                                                                                        |
+|-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CommandsHandler             |                                                                                                                                                                                    |
+| `FetchCommandAttributes()`  | Fetches all the commands from the static classes and the MonoBehaviours in the scene. This can be called manually if you want to update the commands in the console.           |
+| `ExecuteCommand(command, commandArguments, executeLogCallback)` | Executes the command with the given arguments if the command is found.                                                                                             |
+| `SetOptionsFormatter(formatter)`  | Sets the function to format command options. This function will be called when options are available for a command.                                                         |
+| `GetConsoleCommandDescription()` | Gets a list of ConsoleCommandAttributes that describe all available commands in the console.                                                                                  |
+| CommandConsole              |                                                                                                                                                                                    |
+| Properties:                 |                                                                                                                                                                                    |
+| `unityLogMessages`          | Indicates whether the console should receive Unity log messages.                                                                                                                  |
+| `fetchMode`                 | Specifies when the console should fetch commands (OnSceneLoad, OnConsoleTrigger, BeforeExecutingAnyCommand).                                                                    |
+| `objectNameDisplay`         | Specifies how the object name should be displayed (GameObject Name, Class Name, Class Member Name).                                                                             |
+| `commandInputFieldColor`    | The color of the command input field.                                                                                                                                             |
+| `textColor`                 | The color of the console text.                                                                                                                                                     |
+| `parameterColor`            | The color of the command parameters.                                                                                                                                              |
+| `autoCompleteColor`         | The color of the auto-completion text.                                                                                                                                            |
+| `inputPrefixStyle`          | The style of the input prefix (Date, Dash, None, Custom).                                                                                                                         |
+| `inputPrefixColor`          | The color of the input prefix.                                                                                                                                                    |
+| `customInputPrefix`         | The custom input prefix to use if the inputPrefixStyle is set to Custom.                                                                                                          |
+| `dateFormat`                | The date format to use if the inputPrefixStyle is set to Date. Defualt format `HH:MM:SS`                                                                         |
+| `autoCompletionKey`         | The key used to trigger auto-completion.                                                                                                                                          |
+| `submitKey`                 | The key used to submit a command.                                                                                                                                                 |
+| Methods:                    |                                                                                                                                                                                    |
+| `ToggleConsole()`           | Opens or closes the console. Invokes the OnConsole event with the current state (Active/Deactivate).                                                                              |
+| `HandleCommandInput(commandInput, executionLogCallback)` | Handles the command input and executes the command if found.                                                                                                         |
+| `FormatInput(prefix)`       | Formats the input with an optional prefix.                                                                                                                                        |
+| Events:                     |                                                                                                                                                                                    |
+| `OnConsole`                 | This event is raised every time the console is opened or closed.                                                                                                                 |
+| `OnCommandExecuted`         | This event is raised every time a command is executed with its name.                                                                                                              |
+| `OnCommandExecutedWithParameters` | This event is raised every time a command is executed with its name and parameters.                                                                                         |
+
+
