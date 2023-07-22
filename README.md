@@ -117,7 +117,7 @@ simply add ConsoleCommandAttribute to any field property or method
 | `inputPrefixStyle`          | The style of the input prefix (Date, Dash, None, Custom).                                                                                                                         |
 | `inputPrefixColor`          | The color of the input prefix.                                                                                                                                                    |
 | `customInputPrefix`         | The custom input prefix to use if the inputPrefixStyle is set to Custom.                                                                                                          |
-| `dateFormat`                | The date format to use if the inputPrefixStyle is set to Date. Defualt format `HH:MM:SS`                                                                         |
+| `dateFormat`                | The date format to use if the inputPrefixStyle is set to Date. Default format `HH:MM:SS`                                                                         |
 | `autoCompletionKey`         | The key used to trigger auto-completion.                                                                                                                                          |
 | `submitKey`                 | The key used to submit a command.                                                                                                                                                 |
 | Methods:                    |                                                                                                                                                                                    |
