@@ -100,12 +100,12 @@ simply add ConsoleCommandAttribute to any field property or method
 
 | Class / Method              | Description                                                                                                                                                                        |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CommandsHandler             |                                                                                                                                                                                    |
+| **CommandsHandler**             |                                                                                                                                                                                    |
 | `FetchCommandAttributes()`  | Fetches all the commands from the static classes and the MonoBehaviours in the scene. This can be called manually if you want to update the commands in the console.           |
 | `ExecuteCommand(command, commandArguments, executeLogCallback)` | Executes the command with the given arguments if the command is found.                                                                                             |
 | `SetOptionsFormatter(formatter)`  | Sets the function to format command options. This function will be called when options are available for a command.                                                         |
 | `GetConsoleCommandDescription()` | Gets a list of ConsoleCommandAttributes that describe all available commands in the console.                                                                                  |
-| CommandConsole              |                                                                                                                                                                                    |
+| **CommandConsole**              |                                                                                                                                                                                    |
 | Properties:                 |                                                                                                                                                                                    |
 | `unityLogMessages`          | Indicates whether the console should receive Unity log messages.                                                                                                                  |
 | `fetchMode`                 | Specifies when the console should fetch commands (OnSceneLoad, OnConsoleTrigger, BeforeExecutingAnyCommand).                                                                    |
