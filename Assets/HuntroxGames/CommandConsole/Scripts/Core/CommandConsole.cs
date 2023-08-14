@@ -108,6 +108,7 @@ namespace HuntroxGames.Utils
         /// <param name="type"></param>
         protected virtual void OnUnityLogMessageReceived(string condition, string stacktrace, LogType type)
         {
+            
         }
 
         private void OnDisable()

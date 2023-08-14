@@ -190,26 +190,6 @@ namespace HuntroxGames.Utils
             };
         }
         
-        public static int GetLogsHeight(List<string> logs,float rectWidth,Font font)
-        {
-            var height = 0;
-            foreach (var log in logs)
-            {
-                var logWidth = GetLogWidth(log, font);
-                height+= (logWidth) <= rectWidth ? 20 : 40;
-            }
-            return height;
-        }
-        public static int GetLogWidth(string log,Font font)
-        {
-            var textWidth = 0;
-            log = Regex.Replace(log, DATE_PREFIX, string.Empty).TrimEnd(' ');
-            foreach (var @char in log)
-                if (font.GetCharacterInfo(@char,out var info,font.fontSize))
-                    textWidth += info.advance;
-            return textWidth;
-        }
-
         public static string GetMemberInfo<T>(ExecutableCommand<T> member,CommandConsole.ObjectNameDisplayType displayType) where T: MemberInfo
         {
             var format = "";
@@ -233,6 +213,31 @@ namespace HuntroxGames.Utils
             }
             return format;
         }
+
+
+        #region GUI Font Helpers
         
+        public static int GetLogsHeight(List<string> logs,float rectWidth,Font font)
+        {
+            var height = 0;
+            foreach (var log in logs)
+            {
+                var logWidth = GetLogWidth(log, font);
+                height+= logWidth <= rectWidth ? 20 : 40;
+            }
+            return height;
+        }
+        public static int GetLogWidth(string log,Font font)
+        {
+            var textWidth = 0;
+            log = Regex.Replace(log, DATE_PREFIX, string.Empty).TrimEnd(' ');
+            foreach (var @char in log)
+                if (font.GetCharacterInfo(@char,out var info,font.fontSize))
+                    textWidth += info.advance;
+            return textWidth;
+        }
+        
+        #endregion
+
     }
 }
