@@ -29,7 +29,7 @@ namespace HuntroxGames.Utils
         [SerializeField] private RectTransform suggestionParent;
         [SerializeField] private Color suggestionTextColor = Color.white;
         [SerializeField] private Color selectedSuggestionTextColor = new Color32(65, 183, 25, 255);
-
+        
         private string commandInput = "";
 
         private RectTransform suggestionContent;
@@ -47,6 +47,12 @@ namespace HuntroxGames.Utils
         
         private void OnConsoleInputSubmit(string value)
         {
+            if (suggestionParent.gameObject.activeSelf)
+            {
+                AutoComplete();
+                return;
+            }
+            
             HandleCommandInput(value, InsertLog);
             consoleInputField.text = "";
             consoleInputField.Select();
@@ -184,12 +190,7 @@ namespace HuntroxGames.Utils
             
             if (Input.GetKeyDown(autoCompletionKey))
             {
-                var autoComplete = commandSuggestion.AutoComplete(false);
-                if (!autoComplete.IsNullOrEmpty())
-                {
-                    consoleInputField.text = autoComplete;
-                    consoleInputField.MoveTextEnd(false);
-                }
+                AutoComplete();
             }
             
             //if(!isActive) return;
@@ -207,11 +208,25 @@ namespace HuntroxGames.Utils
             }
         }
 
+        private void AutoComplete()
+        {
+            var autoComplete = commandSuggestion.AutoComplete(false);
+            if (!autoComplete.IsNullOrEmpty())
+            {
+                consoleInputField.Select();
+                consoleInputField.ActivateInputField();
+                consoleInputField.MoveToEndOfLine(false, true);
+                consoleInputField.text = autoComplete;
+                consoleInputField.MoveTextEnd(false);
+            }
+        }
+
         [ConsoleCommand]
         private void ClearConsole()
         {
             logList.Clear();
             consoleHistory.Clear();
+            content.DestroyAllChildren();
             LoadSuggestions();
             UpdateLayout();
         }
@@ -248,14 +263,12 @@ namespace HuntroxGames.Utils
         public override void ToggleConsole()
         {
             base.ToggleConsole();
-            if (isActive)
-            {
-                UpdateLayout();
-                consoleInputField.SetTextWithoutNotify("");
-                consoleInputField.Select();
-                consoleInputField.ActivateInputField();
-            }
             uiParentPanel.gameObject.SetActive(isActive);
+            if (!isActive) return;
+            UpdateLayout();
+            consoleInputField.SetTextWithoutNotify("");
+            consoleInputField.Select();
+            consoleInputField.ActivateInputField();
         }
     }
 }
