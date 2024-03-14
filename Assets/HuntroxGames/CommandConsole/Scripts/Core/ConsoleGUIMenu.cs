@@ -16,7 +16,7 @@ namespace HuntroxGames.Utils
         private string commandInput = "";
         private GUISkin consoleStyle;
 
-        private Rect logBoxRect = new(5, -250, Screen.width - 10, 200);
+        private Rect logBoxRect = new Rect(5, -250, Screen.width - 10, 200);
         private Rect viewRect;
         private float animationDuration = 0;
        
