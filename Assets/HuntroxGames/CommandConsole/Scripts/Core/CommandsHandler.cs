@@ -230,17 +230,13 @@ namespace HuntroxGames.Utils
         private static void SetupOptionsCallback(CommandOptionsCallback optnsCallback,
             Action<string, bool> executeLogCallback , object[] arguments)
         {
-            
+     
             if (optnsCallback.firstArgIsIndex && arguments is { Length: > 0 })
             {
-                if (int.TryParse((string) arguments[0], out var argIndex))
-                {
-                    if (argIndex < optnsCallback.options.Count)
-                    {
-                        optnsCallback.options.ToArray()[argIndex].Value.optionCallback?.Invoke();
-                        return;
-                    }
-                }
+                if (!optnsCallback.TryExecuteOption((string)arguments[0]))
+                    executeLogCallback?.Invoke(optnsCallback.onInvalidOption, false);
+                
+                return;
             }
             
             optionsCallback = optnsCallback;

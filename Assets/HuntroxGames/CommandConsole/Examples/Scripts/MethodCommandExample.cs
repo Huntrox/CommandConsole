@@ -85,12 +85,14 @@ namespace HuntroxGames.Utils
         #region CommandOptionsCallback
 
         [ConsoleCommand]
-        public CommandOptionsCallback TeleportTo()
-            => new CommandOptionsCallback(
-                new CommandOption("Wolfden", () => Debug.Log("teleported to Wolfden")),
-                new CommandOption("Sudbury", () => Debug.Log("teleported to Sudbury")),
-                new CommandOption("Hogsfeet", () => Debug.Log("teleported to Hogsfeet")));
-  
+        public CommandOptionsCallback SetLanguage()
+        {
+            return new CommandOptionsCallback(
+                new CommandOption("English", () => Debug.Log("Language set to English")),
+                new CommandOption("French", () => Debug.Log("Language set to French")),
+                new CommandOption("Spanish", () => Debug.Log("Language set to Spanish")));
+        }
+
 
         [ConsoleCommand]
         public CommandOptionsCallback SetGraphics()

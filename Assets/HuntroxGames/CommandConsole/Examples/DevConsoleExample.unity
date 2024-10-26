@@ -185,96 +185,6 @@ LightingSettings:
   m_PVRFilteringAtrousPositionSigmaIndirect: 2
   m_PVRFilteringAtrousPositionSigmaAO: 1
   m_PVRTiledBaking: 0
---- !u!1 &185118161
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 185118163}
-  - component: {fileID: 185118162}
-  - component: {fileID: 185118164}
-  m_Layer: 0
-  m_Name: GUIConsole
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &185118162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185118161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3374b417e1590924ea61e6fdcbe49fbd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 0
-  unityLogMessages: 0
-  fetchMode: 1
-  objectNameDisplay: 5
-  commandInputFieldColor: {r: 0.25490198, g: 0.7176471, b: 0.09803922, a: 1}
-  textColor: {r: 1, g: 1, b: 1, a: 1}
-  parameterColor: {r: 1, g: 1, b: 1, a: 0.25}
-  autoCompleteColor: {r: 1, g: 1, b: 1, a: 0.25}
-  inputPrefixStyle: 0
-  inputPrefixColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  customInputPrefix: 
-  dateFormat: HH:mm:ss
-  autoCompletionKey: 9
-  submitKey: 13
-  font: {fileID: 0}
---- !u!4 &185118163
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185118161}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &185118164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 185118161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8ac2730bf472f14faebd7002ea37743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  consoleKey: 96
-  consoleAction:
-    m_Name: <Keyboard>/backquote
-    m_Type: 1
-    m_ExpectedControlType: 
-    m_Id: 9cdebe18-8016-4366-8c9f-34b30ba6db77
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: fb9d9891-83f9-40a1-aa15-29f326268ab3
-      m_Path: <Keyboard>/backquote
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: <Keyboard>/backquote
-      m_Flags: 0
-    m_Flags: 0
 --- !u!1 &426261933
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,6 +600,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CommandConsoleUI
       objectReference: {fileID: 0}
+    - target: {fileID: 8485564162442174383, guid: 5b2b5f2f0096c5c41b384fc2f35c567c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8485564162442174384, guid: 5b2b5f2f0096c5c41b384fc2f35c567c,
         type: 3}
       propertyPath: m_Pivot.x
@@ -954,3 +869,77 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2149084621033934847
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931820, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931822, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_Name
+      value: CommandConsoleGUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149084621217931822, guid: 851b9bcdf815f4540a07aaf539544ca9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 851b9bcdf815f4540a07aaf539544ca9, type: 3}
