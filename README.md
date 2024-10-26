@@ -14,6 +14,10 @@ This Unity tool allows you to easily create a console and execute commands for y
 - Auto Complete Suggestions
 - Custom Command Options Callback
 - Customizable UI
+
+## Requirements
+- Unity 2020 or later
+
 ## How To Use
 
 1. add CommandConsoleGUI prefab to the scene or CommandConsoleUI to the canvas whichever you prefer
