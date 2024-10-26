@@ -3,22 +3,25 @@ very simple Command Console to create cheat codes and easy developers commands
 ![gif](https://i.imgur.com/KRsCrnx.gif)
 ## Features
 - Methods, Fields and Properties
-- Static and non Static Objects
+- Static and non-Static Objects
 - Public and Private
 - Method Return Types
-- Method Prameters (float ,int, string, Vector2-3, Color, Enums) and more
+- Method Arguments (float ,int, string, Vector2-3, Color, Enums) and more
 - Auto Complete Suggestions
 - Custom Command Options Callback
 - Customizable UI
 ## How To Use
 
-simply add ConsoleCommandAttribute to any field property or method
+1. add CommandConsoleGUI prefab to the scene or CommandConsoleUI to the canvas whichever you prefer
+2. tweak the settings in the inspector to your liking
+3. add ConsoleCommandAttribute to any field property or method
+4. open the console and type the command than press enter to execute the command
 ```c#
 [ConsoleCommand]
 //or with Constructor parameters
 [ConsoleCommand(command: "SetPlayerGold", description: "Sets Player Gold Amount",objectExecutionType: MonoObjectExecutionType.Option)]
 ```
-### Constructor parameters
+### Parameters
 1. `command:` the command you need to type in the console to execute
     - default value: **(field, property, method) name**
 2. `description:` command description in the help commands list
@@ -31,6 +34,7 @@ simply add ConsoleCommandAttribute to any field property or method
     - MonoObjectExecutionType.Option: **will allow the user to choose and execute the command on a specific object from the hierarchy.**
        This option provides flexibility, as it enables the user to select a single object from the hierarchy and apply the command only to that particular object.
     - default value: **MonoObjectExecutionType.FirstInHierarchy**
+
 
 ## Examples
 - Methods
@@ -72,9 +76,14 @@ simply add ConsoleCommandAttribute to any field property or method
 ```
 ![gif](https://i.imgur.com/TDVH345.gif)
 
-- Custom Command Options Callback
+### Custom Command Options Callback
 
-  allows you to add your list of executable options in one command 
+- This allows you to add your list of executable options in one command. 
+- submitting the command without arguments will display the list of options.
+- providing arguments will execute the selected option , e.g. `SetGraphics High` or `SetGraphics 2`, argument "`2`" is the index of the selected option "High"
+
+
+
 ```c#
         [ConsoleCommand]
         public CommandOptionsCallback SetGraphics()
@@ -87,17 +96,18 @@ simply add ConsoleCommandAttribute to any field property or method
         }
 
         [ConsoleCommand]
-        public CommandOptionsCallback TeleportTo()
-            => new CommandOptionsCallback(
-                new CommandOption("Wolfden", () => Debug.Log("teleported to Wolfden")),
-                new CommandOption("Sudbury", () => Debug.Log("teleported to Sudbury")),
-                new CommandOption("Hogsfeet", () => Debug.Log("teleported to Hogsfeet")));
+        public CommandOptionsCallback SetLanguage()
+        {
+            return new CommandOptionsCallback(
+                new CommandOption("English", () => Debug.Log("Language set to English")),
+                new CommandOption("French", () => Debug.Log("Language set to French")),
+                new CommandOption("Spanish", () => Debug.Log("Language set to Spanish")));
+        }
    
 ```
- ![img](https://i.imgur.com/mCb7dZm.png)
+![img](https://i.imgur.com/TKss9ss.png)
 
-## Api
-
+# Api
 | Class / Method              | Description                                                                                                                                                                        |
 |-----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **CommandsHandler**             |                                                                                                                                                                                    |
