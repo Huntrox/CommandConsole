@@ -1,6 +1,10 @@
 # Unity Command Console
 very simple Command Console to create cheat codes and easy developers commands
-![gif](https://i.imgur.com/KRsCrnx.gif)
+
+|                                                                                                        | |
+|:------------------------------------------------------------------------------------------------------:|:-------------------------:|
+| <img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://i.imgur.com/qoCnSPA.gif"> |  <img  alt="screen shot 2017-08-07 at 12 18 15 pm" src="https://i.imgur.com/tlbqjD3.gif">|
+
 ## Features
 - Methods, Fields and Properties
 - Static and non-Static Objects
@@ -57,7 +61,7 @@ very simple Command Console to create cheat codes and easy developers commands
             SceneManager.LoadScene(levelName);
         }
 ```
-![gif](https://i.imgur.com/T07V2Dx.gif)
+![gif](https://i.imgur.com/FiWLxlQ.gif)
 - Fields and Properties
 ```c#
         [ReadOnly] public int health = 0;
