@@ -1,6 +1,5 @@
-using System;
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && UNITY_2021_OR_NEWER
 using UnityEngine.InputSystem;
 #endif
 namespace HuntroxGames.Utils
@@ -12,7 +11,7 @@ namespace HuntroxGames.Utils
 #endif 
         
         
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && UNITY_2021_OR_NEWER
         [SerializeField] private InputAction consoleAction =
             new InputAction("<Keyboard>/backquote", InputActionType.Button, "<Keyboard>/backquote");
 
@@ -23,7 +22,7 @@ namespace HuntroxGames.Utils
         
         public void Update()
         {
-#if ENABLE_INPUT_SYSTEM
+#if ENABLE_INPUT_SYSTEM && UNITY_2021_OR_NEWER
 
             if (consoleAction.triggered)
             {
@@ -33,7 +32,7 @@ namespace HuntroxGames.Utils
 
 #elif ENABLE_LEGACY_INPUT_MANAGER
             if (Input.GetKeyDown(consoleKey))
-                CommandConsole.Instance.Console();
+                CommandConsole.Instance.ToggleConsole();
 #endif
         }
     }

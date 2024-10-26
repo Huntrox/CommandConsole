@@ -231,7 +231,7 @@ namespace HuntroxGames.Utils
             Action<string, bool> executeLogCallback , object[] arguments)
         {
      
-            if (optnsCallback.firstArgIsIndex && arguments is { Length: > 0 })
+            if (optnsCallback.firstArgIsIndex && arguments != null && arguments.Length > 0)
             {
                 if (!optnsCallback.TryExecuteOption((string)arguments[0]))
                     executeLogCallback?.Invoke(optnsCallback.onInvalidOption, false);
