@@ -95,6 +95,19 @@ namespace HuntroxGames.Utils
         private static void ExecuteFieldsCommands(string fieldName, object[] arguments,
             Action<string, bool> executeLogCallback)
         {
+            foreach (var field in FieldCommands.ExecutableStaticCommands(fieldName))
+                Execute(field);
+
+            var options = new List<CommandOption>();
+            foreach (var field in FieldCommands.ExecutableCommands(fieldName))
+            {
+                if (!field.isOptions)
+                    Execute(field);
+                else
+                    options.Add(new CommandOption(field.key.name, () => Execute(field)));
+            }
+            if (!options.IsNullOrEmpty())
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback,arguments);
 
             void Execute(ExecutableCommand<FieldInfo> field)
             {
@@ -120,20 +133,6 @@ namespace HuntroxGames.Utils
                     executeLogCallback?.Invoke(log, true);
                 }
             }
-
-            foreach (var field in FieldCommands.ExecutableStaticCommands(fieldName))
-                Execute(field);
-
-            var options = new List<CommandOption>();
-            foreach (var field in FieldCommands.ExecutableCommands(fieldName))
-            {
-                if (!field.isOptions)
-                    Execute(field);
-                else
-                    options.Add(new CommandOption(field.key.name, () => Execute(field)));
-            }
-            if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
         }
 
         private static void ExecutePropertiesCommands(string propertyName, object[] arguments,
@@ -183,7 +182,7 @@ namespace HuntroxGames.Utils
                     options.Add(new CommandOption(property.key.name, () => Execute(property)));
             }
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback,arguments);
             
         }
 
@@ -200,7 +199,7 @@ namespace HuntroxGames.Utils
                 
                 if (returnValue is CommandOptionsCallback callback)
                 {
-                    SetupOptionsCallback(callback, executeLogCallback);
+                    SetupOptionsCallback(callback, executeLogCallback, arguments);
                     return;
                 }
 
@@ -225,12 +224,25 @@ namespace HuntroxGames.Utils
             }
 
             if (!options.IsNullOrEmpty())
-                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback);
+                SetupOptionsCallback(new CommandOptionsCallback(options.ToArray()), executeLogCallback, arguments);
         }
 
         private static void SetupOptionsCallback(CommandOptionsCallback optnsCallback,
-            Action<string, bool> executeLogCallback)
+            Action<string, bool> executeLogCallback , object[] arguments)
         {
+            
+            if (optnsCallback.firstArgIsIndex && arguments is { Length: > 0 })
+            {
+                if (int.TryParse((string) arguments[0], out var argIndex))
+                {
+                    if (argIndex < optnsCallback.options.Count)
+                    {
+                        optnsCallback.options.ToArray()[argIndex].Value.optionCallback?.Invoke();
+                        return;
+                    }
+                }
+            }
+            
             optionsCallback = optnsCallback;
             
             if (optionsCallbackFormatter != null)

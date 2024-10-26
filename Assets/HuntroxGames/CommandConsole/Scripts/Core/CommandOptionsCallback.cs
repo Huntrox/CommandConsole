@@ -14,8 +14,15 @@ namespace HuntroxGames.Utils
         
         public readonly Dictionary<string,CommandOption> options;
         public readonly string onInvalidOption = "Invalid Option, Please try again";
-        public CommandOptionsCallback(params CommandOption[] options)
+        public bool firstArgIsIndex = true;
+        
+        public CommandOptionsCallback(params CommandOption[] options):this(true,options)
         {
+        }
+       
+        public CommandOptionsCallback(bool firstArgIsIndex = false,params CommandOption[] options)
+        {
+            this.firstArgIsIndex = firstArgIsIndex;
             this.options = options.ToDictionary(x => x.optionName.ToUpper());
         }
         public CommandOptionsCallback(IEnumerable<(string command, Action callback)> options)

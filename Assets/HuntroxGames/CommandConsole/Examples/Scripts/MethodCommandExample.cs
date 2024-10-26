@@ -90,6 +90,7 @@ namespace HuntroxGames.Utils
                 new CommandOption("Wolfden", () => Debug.Log("teleported to Wolfden")),
                 new CommandOption("Sudbury", () => Debug.Log("teleported to Sudbury")),
                 new CommandOption("Hogsfeet", () => Debug.Log("teleported to Hogsfeet")));
+  
 
         [ConsoleCommand]
         public CommandOptionsCallback SetGraphics()
