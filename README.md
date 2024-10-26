@@ -1,5 +1,5 @@
-# Unity Command Console
-very simple Command Console to create cheat codes and easy developers commands
+# Command Console For Unity
+This Unity tool allows you to easily create a console and execute commands for your game in Unity. fast, easy and powerful.
 
 |                                                                                                        | |
 |:------------------------------------------------------------------------------------------------------:|:-------------------------:|
