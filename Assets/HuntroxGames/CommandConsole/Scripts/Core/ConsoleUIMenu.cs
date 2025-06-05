@@ -43,6 +43,7 @@ namespace HuntroxGames.Utils
                 tmp.fontSize = inputFontSize;
             
         }
+        
 
         
         private void OnConsoleInputSubmit(string value)
@@ -61,6 +62,8 @@ namespace HuntroxGames.Utils
             LoadSuggestions();
         }
 
+ 
+        
         private void OnConsoleInputValueChanged(string value)
         {
             commandInput = value;
@@ -222,13 +225,19 @@ namespace HuntroxGames.Utils
         }
 
         [ConsoleCommand]
-        private void ClearConsole()
+        public void ClearConsole()
         {
             logList.Clear();
             consoleHistory.Clear();
             content.DestroyAllChildren();
             LoadSuggestions();
             UpdateLayout();
+        }
+        
+        public void SubmitCurrentInput()
+        {
+            var currentInput = consoleInputField.text;
+            OnConsoleInputSubmit(currentInput);
         }
         
         protected override void CommandExecuteInvoke(string cmd)
