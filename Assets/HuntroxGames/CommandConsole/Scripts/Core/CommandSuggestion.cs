@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HuntroxGames.Utils
 {
@@ -74,8 +75,16 @@ namespace HuntroxGames.Utils
             var list = new List<string>();
             foreach (var command in CommandsHandler.GetConsoleCommandDescription())
             {
-                if (command.command.StartsWith(commandInput, StringComparison.CurrentCultureIgnoreCase))
-                    list.Add(command.command);
+                if (!command.command.StartsWith(commandInput, StringComparison.CurrentCultureIgnoreCase)) continue;
+                list.Add(command.command);
+                if (commandInput.Length == command.command.Length)
+                {
+                    if (!command.autoCompleteOptions.IsNullOrEmpty())
+                    {
+                        list.AddRange(command.autoCompleteOptions.Select(autoComplete => command.command + " " + autoComplete));
+                    }
+                }
+
             }
 
             return list;

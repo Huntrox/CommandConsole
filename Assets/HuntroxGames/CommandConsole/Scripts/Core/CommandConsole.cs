@@ -12,6 +12,12 @@ namespace HuntroxGames.Utils
     public abstract class CommandConsole : Singleton<CommandConsole>
     {
         [Flags]
+        public enum InputComparison
+        {
+            StartsWith = 1 << 0,
+            Contains = 1 << 1
+        }
+        [Flags]
         private enum FetchMode
         {
             OnSceneLoad = 1 << 0,
@@ -57,6 +63,7 @@ namespace HuntroxGames.Utils
         [Header("Input")]
         [SerializeField] protected KeyCode autoCompletionKey = KeyCode.Tab;
         [SerializeField] protected KeyCode submitKey = KeyCode.Return;
+        [SerializeField] protected InputComparison inputComparison = InputComparison.StartsWith;
         
         
         
